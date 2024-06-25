@@ -2,38 +2,29 @@
 Pdweb_IncludeLib("pdweb.mysql.php");
 Pdweb_Include("*/inc/.app.php");
 
-define("APP_ROLE_VISITEUR", "V");
-define("APP_ROLE_JOUEUR",   "J");
-define("APP_ROLE_AUTEUR",   "A");
+define("APP_ROLE_VISITEUR",         "V");
+define("APP_ROLE_ADMINISTRATEUR",   "A");
+define("APP_ROLE_MEDECIN",          "M");
+define("APP_ROLE_PATIENT",          "P");
 
 define("APP_MENU", array
 (
 	"ACCUEIL" => array
 	(
 		"id" => "ACCUEIL",
-		"acces" => array(APP_ROLE_VISITEUR, APP_ROLE_JOUEUR, APP_ROLE_AUTEUR),
+		"acces" => array(APP_ROLE_VISITEUR, APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
 		"libelleMenu" => "Accueil",
-		"infoBulleMenu" => "Informations générales sur le site",
+		"infoBulleMenu" => "Informations gï¿½nï¿½rales sur le site",
 		"urlVue" => "*/index.php",
 		"sousTitre" => "Accueil",
 		"corpsPage" => "Accueil/Afficher"
-	),
-	"INSCRIPTION" => array
-	(
-		"id" => "INSCRIPTION",
-		"acces" => array(APP_ROLE_VISITEUR),
-		"libelleMenu" => "Inscrivez-vous",
-		"infoBulleMenu" => "Inscrivez-vous soit en tant que joueur, soit en tant qu'auteur",
-		"urlVue" => "*/index.php",
-		"sousTitre" => "Inscription",
-		"corpsPage" => "Inscription/Afficher"
 	),
 	"AUTHENTIFICATION" => array
 	(
 		"id" => "AUTHENTIFICATION",
 		"acces" => array(APP_ROLE_VISITEUR),
 		"libelleMenu" => "Authentifiez-vous",
-		"infoBulleMenu" => "Authentifiez-vous pour pouvoir soit jouer, soit créer",
+		"infoBulleMenu" => "Authentifiez-vous pour pouvoir accÃ©der aux fonctionnalitÃ©s",
 		"urlVue" => "*/index.php",
 		"sousTitre" => "Authentification",
 		"corpsPage" => "Authentification/Afficher"
@@ -51,9 +42,9 @@ define("APP_MENU", array
 	"DECONNEXION" => array
 	(
 		"id" => "DECONNEXION",
-		"acces" => array(APP_ROLE_JOUEUR, APP_ROLE_AUTEUR),
-		"libelleMenu" => "Déconnectez-vous",
-		"infoBulleMenu" => "Pour des raisons de sécurité, pensez à vous déconnecter du site en fin d'utilisation",
+		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
+		"libelleMenu" => "Dï¿½connectez-vous",
+		"infoBulleMenu" => "Pour des raisons de sï¿½curitï¿½, pensez ï¿½ vous dï¿½connecter du site en fin d'utilisation",
 		"urlVue" => "*/index.php",
 		"sousTitre" => false,
 		"corpsPage" => "Authentification/Deconnecter"
@@ -61,43 +52,53 @@ define("APP_MENU", array
 	"TABLEAU_DE_BORD" => array
 	(
 		"id" => "TABLEAU_DE_BORD",
-		"acces" => array(APP_ROLE_JOUEUR, APP_ROLE_AUTEUR),
+		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
 		"libelleMenu" => "Tableau de bord",
 		"infoBulleMenu" => "Votre page personnelle affichant vos informations",
 		"urlVue" => "*/index.php",
 		"sousTitre" => "Tableau de bord de " . App_DenominationUtilisateur(),
-		"corpsPage" => App_EstJoueur() ? "Joueur/AfficherAccueil" : "Auteur/AfficherAccueil"
+		"corpsPage" => App_EstAdministrateur() ? "Admin/AfficherAccueil" : (App_EstMedecin() ? "Medecin/AfficherAccueil" : "Patient/AfficherAccueil")
 	),
-	"CRUD_IMAGE" => array
+    "GESTION_UTILISATEURS" => array
+    (
+        "id" => "UTILISATEURS",
+        "acces" => array(APP_ROLE_ADMINISTRATEUR),
+        "libelleMenu" => "Gestions des Utilisateurs",
+        "infoBulleMenu" => "GÃ©rer les utilisateurs de l'applications",
+        "urlVue" => "*/index.php",
+        "sousTitre" => "Utilisateurs",
+        "corpsPage" => "Utilisateurs/Afficher"
+    ),
+	"DOSSIERS_PATIENTS" => array
 	(
-		"id" => "CRUD_IMAGE",
-		"acces" => array(APP_ROLE_AUTEUR),
-		"libelleMenu" => "Vos images",
-		"infoBulleMenu" => "Gestion de vos images uploadées",
+		"id" => "DOSSIERS",
+		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN),
+		"libelleMenu" => "Dossiers Patiens",
+		"infoBulleMenu" => "Gestion des dossiers patients",
 		"urlVue" => "*/index.php",
-		"sousTitre" => "Images de " . App_DenominationUtilisateur(),
-		"corpsPage" => "Illustration/AfficherListe"
+		"sousTitre" => "Dossier Patients de " . App_DenominationUtilisateur(),
+		"corpsPage" => App_EstAdministrateur() ? "Admin/AfficherDossiers" : "Medecin/AfficherDossiers"
 	),
-	"CRUD_IMAGE_AJOUT" => array
+	"CONSULTATIONS" => array
 	(
-		"id" => "CRUD_IMAGE_AJOUT",
-		"acces" => array(APP_ROLE_AUTEUR),
-		"libelleMenu" => null,
-		"infoBulleMenu" => null,
+		"id" => "CONSULTATIONS",
+		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
+		"libelleMenu" => "Consultations",
+		"infoBulleMenu" => "Gestion des consultations",
 		"urlVue" => "*/index.php",
-		"sousTitre" => "Ajout d'une image pour " . App_DenominationUtilisateur(),
-		"corpsPage" => "Illustration/AfficherAjout"
+		"sousTitre" => "Consultations de " . App_DenominationUtilisateur(),
+		"corpsPage" => App_EstAdministrateur() ? "Admin/AfficherConsultations" : (App_EstMedecin() ? "Medecin/AfficherConsultations" : "Patient/AfficherConsultations")
 	),
-	"CRUD_IMAGE_EDITION" => array
-	(
-		"id" => "CRUD_IMAGE_EDITION",
-		"acces" => array(APP_ROLE_AUTEUR),
-		"libelleMenu" => null,
-		"infoBulleMenu" => null,
-		"urlVue" => "*/index.php",
-		"sousTitre" => "Modification d'une image pour " . App_DenominationUtilisateur(),
-		"corpsPage" => "Illustration/AfficherEdition"
-	)
+    "RENDEZ_VOUS" => array
+    (
+        "id" => "RENDEZ_VOUS",
+        "acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
+        "libelleMenu" => "Rendez-vous",
+        "infoBulleMenu" => "Gestion des Rendez-vous mÃ©dical",
+        "urlVue" => "*/index.php",
+        "sousTitre" => "Rendez-vous de " . App_DenominationUtilisateur(),
+        "corpsPage" => App_EstAdministrateur() ? "Admin/AfficherRendezVous" : (App_EstMedecin() ? "Medecin/AfficherRendezVous" : "Patient/AfficherRendezVous")
+    )
 ));
-App_IdPageActuelle(); // Garantit que l'identifiant de page est initialisé lors de la première visite du site
+App_IdPageActuelle(); // Garantit que l'identifiant de page est initialisï¿½ lors de la premiï¿½re visite du site
 ?>

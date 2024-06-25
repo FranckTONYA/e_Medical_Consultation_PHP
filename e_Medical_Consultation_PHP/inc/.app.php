@@ -3,7 +3,7 @@ MySql_SetConnection(APP_MYSQL_USERNAME, APP_MYSQL_PASSWORD, APP_MYSQL_DBNAME, de
 
 function App_DefinirRole($role)
 {
-	if (($role !== APP_ROLE_VISITEUR) && ($role !== APP_ROLE_JOUEUR) && ($role !== APP_ROLE_AUTEUR)) return false;
+	if (($role !== APP_ROLE_VISITEUR) && ($role !== APP_ROLE_ADMINISTRATEUR) && ($role !== APP_ROLE_MEDECIN) && ($role !== APP_ROLE_PATIENT)) return false;
 	Session_CheckAvailability();
 	$_SESSION["utilisateur"] = array();
 	$_SESSION["utilisateur"]["role"] = $role;
@@ -30,14 +30,19 @@ function App_EstVisiteur()
 	return App_ALeRole(APP_ROLE_VISITEUR);
 }
 
-function App_EstJoueur()
+function App_EstAdministrateur()
 {
-	return App_ALeRole(APP_ROLE_JOUEUR);
+	return App_ALeRole(APP_ROLE_ADMINISTRATEUR);
 }
 
-function App_EstAuteur()
+function App_EstMedecin()
 {
-	return App_ALeRole(APP_ROLE_AUTEUR);
+	return App_ALeRole(APP_ROLE_MEDECIN);
+}
+
+function App_EstPatient()
+{
+    return App_ALeRole(APP_ROLE_PATIENT);
 }
 
 function App_PageEstAccessible($idPage)
@@ -85,7 +90,7 @@ function App_IdPageActuelle()
 				break;
 			}
 		}
-		if (!isset($_SESSION["page"])) die("<p>Il n'existe aucun point du menu accessible au rôle d'utilisateur de type '" . App_RoleActuel() . "' !</p>");
+		if (!isset($_SESSION["page"])) die("<p>Il n'existe aucun point du menu accessible au rï¿½le d'utilisateur de type '" . App_RoleActuel() . "' !</p>");
 	}
 	return $_SESSION["page"]["id"];
 }
@@ -103,7 +108,7 @@ function App_EstPageActuelle($idPage)
 function App_SousTitreActuel()
 {
 	Session_CheckAvailability();
-	if (!isset($_SESSION["page"]) || !is_array($_SESSION["page"])) die("<p>La page actuelle n'a pas été définie !</p>");
+	if (!isset($_SESSION["page"]) || !is_array($_SESSION["page"])) die("<p>La page actuelle n'a pas ï¿½tï¿½ dï¿½finie !</p>");
 	return isset($_SESSION["page"]["sousTitre"]) && is_string($_SESSION["page"]["sousTitre"]) && !empty($_SESSION["page"]["sousTitre"])
 	     ? $_SESSION["page"]["sousTitre"]
 		 : false;
@@ -112,19 +117,19 @@ function App_SousTitreActuel()
 function App_GenerateurCorpsPage()
 {
 	Session_CheckAvailability();
-	if (!isset($_SESSION["page"]) || !is_array($_SESSION["page"])) die("<p>La page actuelle n'a pas été définie !</p>");
+	if (!isset($_SESSION["page"]) || !is_array($_SESSION["page"])) die("<p>La page actuelle n'a pas ï¿½tï¿½ dï¿½finie !</p>");
 	$parties = explode("/", $_SESSION["page"]["corpsPage"]);
-	if (count($parties) != 2) die("<p>Le générateur de corps de page n'est pas correctement défini !</p>");
+	if (count($parties) != 2) die("<p>Le gï¿½nï¿½rateur de corps de page n'est pas correctement dï¿½fini !</p>");
 	$nomFichier = "*/inc/" . strtolower($parties[0]) . ".php";
-	if (!Pdweb_Include($nomFichier)) die("<p>Le générateur de corps de page fait référence à une partie dont le fichier n'existe pas !</p>");
+	if (!Pdweb_Include($nomFichier)) die("<p>Le gï¿½nï¿½rateur de corps de page fait rï¿½fï¿½rence ï¿½ une partie dont le fichier n'existe pas !</p>");
 	$nomFonction = $parties[0] . "_" . $parties[1];
-	if (!is_callable($nomFonction)) die("<p>Le générateur de corps de page fait référence à une fonction inexistante !</p>");
+	if (!is_callable($nomFonction)) die("<p>Le gï¿½nï¿½rateur de corps de page fait rï¿½fï¿½rence ï¿½ une fonction inexistante !</p>");
 	return $nomFonction;
 }
 
 function App_RedirigerVersPage($idPage, ...$params)
 {
-	if (!App_PageEstAccessible($idPage)) die("<p>La page $idPage n'est pas définie, ou n'est pas accessible au role " . App_RoleActuel() . " !</p>");
+	if (!App_PageEstAccessible($idPage)) die("<p>La page $idPage n'est pas dï¿½finie, ou n'est pas accessible au role " . App_RoleActuel() . " !</p>");
 	$parametresGet = "";
 	$cle = false;
 	foreach ($params as $valeur)
@@ -176,18 +181,25 @@ function App_IdUtilisateur()
 	return $_SESSION["utilisateur"]["id"];
 }
 
-function App_IdJoueur()
+function App_IdAdministrateur()
 {
-	if (!App_EstJoueur()) return false;
+	if (!App_EstAdministrateur()) return false;
 	Session_CheckAvailability();
-	return $_SESSION["utilisateur"]["idJoueur"];
+	return $_SESSION["utilisateur"]["idAdmin"];
 }
 
-function App_IdAuteur()
+function App_IdMedecin()
 {
-	if (!App_EstAuteur()) return false;
+	if (!App_EstMedecin()) return false;
 	Session_CheckAvailability();
-	return $_SESSION["utilisateur"]["idAuteur"];
+	return $_SESSION["utilisateur"]["idMedecin"];
+}
+
+function App_IdPatient()
+{
+    if (!App_EstPatient()) return false;
+    Session_CheckAvailability();
+    return $_SESSION["utilisateur"]["idPatient"];
 }
 
 function App_AfficherFlashInfo()

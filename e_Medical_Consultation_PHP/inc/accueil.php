@@ -5,15 +5,19 @@ function Accueil_Afficher()
 	{
 		if (($denomination = App_DenominationUtilisateur()) === false) $denomination = "nouvel utilisateur";
 		Html_GenerateOC("p", HTML_CONTENT, "Bienvenue à vous, $denomination.");
-		Html_GenerateOC("p", HTML_CONTENT, "Ce site a pour but de permettre aux joueurs d'apprendre en vivant une aventure !");
-		if (App_EstJoueur())
+		Html_GenerateOC("p", HTML_CONTENT, "Ce site a pour but de permettre des consultations Médicale en ligne !");
+		if (App_EstAdministrateur())
 		{
-			Html_GenerateOC("p", HTML_CONTENT, "...blabla JOUEUR...");
+			Html_GenerateOC("p", HTML_CONTENT, "...blabla ADMINISTRATEUR...");
 		}
-		else if (App_EstAuteur())
+		else if (App_EstMedecin())
 		{
-			Html_GenerateOC("p", HTML_CONTENT, "...blabla AUTEUR...");
+			Html_GenerateOC("p", HTML_CONTENT, "...blabla MEDECIN...");
 		}
+        else if (App_EstPatient())
+        {
+            Html_GenerateOC("p", HTML_CONTENT, "...blabla PATIENT...");
+        }
 		else
 		{
 			Html_GenerateOC("p", HTML_CONTENT, "...blabla VISITEUR...");

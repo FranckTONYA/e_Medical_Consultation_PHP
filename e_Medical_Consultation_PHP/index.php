@@ -45,7 +45,7 @@ if (count(get_included_files()) == 1)
 	}
 	if (!file_exists("index.content.php"))
 	{
-		if (file_exists(".config.php")) die("<p>La racine du site, marquée par la présence du fichier de configuration de la bibliothèque PDWEB, ne contient pas de contenu d'accueil (index.content.php) !</p>");
+		if (file_exists(".config.php")) die("<p>La racine du site, marquï¿½e par la prï¿½sence du fichier de configuration de la bibliothï¿½que PDWEB, ne contient pas de contenu d'accueil (index.content.php) !</p>");
 		header("location:../");
 		die();
 	}
@@ -59,13 +59,13 @@ if (count(get_included_files()) == 1)
 		if (file_exists($pathToRoot . ".config.php"))
 		{
 			include_once($pathToRoot . ".config.php");
-			if (!defined("PDWEB_CHARSET")) die("<p>Le fichier de configuration de la bibliothèque PDWEB ne définit pas le jeu de caractères utilisé par le site !</p>");
-			if (!defined("PDWEB_LIB_PATH")) die("<p>Le fichier de configuration de la bibliothèque PDWEB n'a pas été défini dans le chemin d'accès à cette bibliothèque !</p>");
+			if (!defined("PDWEB_CHARSET")) die("<p>Le fichier de configuration de la bibliothï¿½que PDWEB ne dï¿½finit pas le jeu de caractï¿½res utilisï¿½ par le site !</p>");
+			if (!defined("PDWEB_LIB_PATH")) die("<p>Le fichier de configuration de la bibliothï¿½que PDWEB n'a pas ï¿½tï¿½ dï¿½fini dans le chemin d'accï¿½s ï¿½ cette bibliothï¿½que !</p>");
 			if (empty(PDWEB_LIB_PATH)) die();
 			$pathToPdweb = $pathToRoot . ((PDWEB_LIB_PATH[0] == "/") ? substr(PDWEB_LIB_PATH, 1) : PDWEB_LIB_PATH);
 			if (substr($pathToPdweb, -1) != "/") $pathToPdweb .= "/";
 			$mainPdwebUrl = $pathToPdweb . "pdweb.php";
-			if (!file_exists($mainPdwebUrl)) die("<p>Le fichier de configuration de la bibliothèque PDWEB a défini un chemin d'accès incorrect vers cette bibliothèque !</p>");
+			if (!file_exists($mainPdwebUrl)) die("<p>Le fichier de configuration de la bibliothï¿½que PDWEB a dï¿½fini un chemin d'accï¿½s incorrect vers cette bibliothï¿½que !</p>");
 			define("PDWEB_PATH_TO_ROOT", $pathToRoot);
 			define("PDWEB_PATH_TO_LIB", $pathToPdweb);
 			include_once($mainPdwebUrl);
@@ -74,7 +74,7 @@ if (count(get_included_files()) == 1)
 		if ($pathToRoot == "./") $pathToRoot = "";
 		$pathToRoot .= "../";
 	}
-	if (!isset($pathToPdweb)) die("<p>Le fichier de configuration de la bibliothèque PDWEB n'est pas présent dans la racine du site !</p>");
+	if (!isset($pathToPdweb)) die("<p>Le fichier de configuration de la bibliothï¿½que PDWEB n'est pas prï¿½sent dans la racine du site !</p>");
 	Pdweb_Include("*/inc/.menu_et_securite.php");
 	if ($indexIsHttpRequested) include("index.content.php");
 })();
