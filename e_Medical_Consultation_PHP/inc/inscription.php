@@ -1,17 +1,17 @@
 <?php
 Pdweb_IncludeLib("pdweb.html.php");
 
-define("APP_FORM_INSCRIPTION_JOUEUR", array
+define("APP_FORM_GESTION_UTILISATEUR", array
 (
-	"id" => "inscription_joueur",
+	"id" => "gestion_utilisateur",
 	"url" => "*/.controleur.php",
 	"elements" => array
 	(
 		array
 		(
-			"name" => "login",
+			"name" => "email",
 			"type" => "text",
-			"label" => "Login :"
+			"label" => "Email :"
 		),
 		array
 		(
@@ -27,9 +27,9 @@ define("APP_FORM_INSCRIPTION_JOUEUR", array
 		),
 		array
 		(
-			"name" => "email",
-			"type" => "text",
-			"label" => "Adresse e-mail :"
+			"name" => "role",
+			"type" => "select",
+			"label" => "Rôle :"
 		),
 		array
 		(
@@ -43,143 +43,123 @@ define("APP_FORM_INSCRIPTION_JOUEUR", array
 			"type" => "text",
 			"label" => "Prénom :"
 		),
+        array
+        (
+            "name" => "telephone",
+            "type" => "text",
+            "label" => "Téléphone :"
+        ),
+        array
+        (
+            "name" => "dateNaissance",
+            "type" => "text",
+            "label" => "Date de naissance :"
+        ),
+        array
+        (
+            "name" => "adresse",
+            "type" => "text",
+            "label" => "Adresse :"
+        ),
 		array
 		(
 			"name" => "action",
 			"type" => "hidden",
-			"value" => "Inscription/InscrireJoueur"
+			"value" => "Creer/CreerUtilisateur"
 		),
 		array
 		(
-			"name" => "inscrire",
+			"name" => "creer",
 			"type" => "submit",
-			"value" => "S'inscrire en tant que joueur"
+			"value" => "Creer un Utilisateur"
 		)
 	)
 ));
 
-define("APP_FORM_INSCRIPTION_AUTEUR", array
-(
-	"id" => "inscription_auteur",
-	"url" => "*/.controleur.php",
-	"elements" => array
-	(
-		array
-		(
-			"name" => "login",
-			"type" => "text",
-			"label" => "Login :"
-		),
-		array
-		(
-			"name" => "mdp",
-			"type" => "password",
-			"label" => "Mot de passe :"
-		),
-		array
-		(
-			"name" => "confirmation_mdp",
-			"type" => "password",
-			"label" => "Confirmation du mot de passe :"
-		),
-		array
-		(
-			"name" => "email",
-			"type" => "text",
-			"label" => "Adresse e-mail :"
-		),
-		array
-		(
-			"name" => "denomination",
-			"type" => "text",
-			"label" => "Dénomination :"
-		),
-		array
-		(
-			"name" => "action",
-			"type" => "hidden",
-			"value" => "Inscription/InscrireAuteur"
-		),
-		array
-		(
-			"name" => "inscrire",
-			"type" => "submit",
-			"value" => "S'inscrire en tant qu'auteur"
-		)
-	)
-));
-
-function Inscription_Afficher()
+function Utilisateurs_Afficher()
 {
 	Html_GenerateG("section", HTML_CONTENT, function ()
 	{
-		Html_GenerateForm(APP_FORM_INSCRIPTION_JOUEUR);
-		Html_GenerateForm(APP_FORM_INSCRIPTION_AUTEUR);
+		Html_GenerateForm(APP_FORM_GESTION_UTILISATEUR);
 	});
 }
 
-function Inscription_InscrireJoueur($donnees)
+function Utilisateurs_Creer($donnees)
 {
 	if (!App_EstVisiteur()) Http_Redirect("*/");
-	if (!isset($donnees["email"], $donnees["login"], $donnees["mdp"], $donnees["confirmation_mdp"], $donnees["nom"], $donnees["prenom"])) Http_Redirect("*/");
-	Form_ClearErrors(APP_FORM_INSCRIPTION_JOUEUR["id"]);
-	Form_ClearValues(APP_FORM_INSCRIPTION_JOUEUR["id"]);
+	if (!isset($donnees["email"], $donnees["mdp"], $donnees["confirmation_mdp"], $donnees["nom"], $donnees["prenom"], $donnees["telephone"], $donnees["dateNaissance"], $donnees["adresse"])) Http_Redirect("*/");
+	Form_ClearErrors(APP_FORM_GESTION_UTILISATEUR["id"]);
 	$erreurPresente = false;
-	if (($longueur=strlen($login = trim($donnees["login"]))) < 4)
+    if (($longueur=strlen($email = trim($donnees["email"]))) < 6)
+    {
+        $erreurPresente = true;
+        Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "email", "L'adresse e-mail doit comporter au moins 6 caractères significatifs !");
+    }
+    else if ($longueur > 120)
+    {
+        $erreurPresente = true;
+        Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "email", "L'adresse e-mail doit comporter au plus 120 caractères significatifs !");
+    }
+	if (($longueur=strlen($mdp = $donnees["mdp"])) < 5)
 	{
 		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "login", "Le login doit comporter au moins 4 caractères significatifs !");
-	}
-	else if ($longueur > 40)
-	{
-		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "login", "Le login doit comporter au plus 40 caractères significatifs !");
-	}
-	if (($longueur=strlen($mdp = $donnees["mdp"])) < 3)
-	{
-		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "mdp", "Le mot de passe doit comporter au moins 3 caractères !");
+		Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "mdp", "Le mot de passe doit comporter au moins 5 caractères !");
 	}
 	if ($donnees["confirmation_mdp"] != $donnees["mdp"])
 	{
 		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "confirmation_mdp", "La confirmation de mot de passe ne coïncide pas avec le mot de passe encodé !");
-	}
-	if (($longueur=strlen($email = trim($donnees["email"]))) < 6)
-	{
-		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "email", "L'adresse e-mail doit comporter au moins 6 caractères significatifs !");
-	}
-	else if ($longueur > 120)
-	{
-		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "email", "L'adresse e-mail doit comporter au plus 120 caractères significatifs !");
-	}
-	else if (filter_var($email, FILTER_VALIDATE_EMAIL) === false)
-	{
-		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "email", "L'adresse e-mail ne semble pas valide !");
+		Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "confirmation_mdp", "La confirmation de mot de passe ne coïncide pas avec le mot de passe encodé !");
 	}
 	if (($longueur=strlen($nom = trim($donnees["nom"]))) < 2)
 	{
 		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "nom", "Le nom doit comporter au moins 2 caractères significatifs !");
+		Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "nom", "Le nom doit comporter au moins 2 caractères significatifs !");
 	}
 	else if ($longueur > 40)
 	{
 		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "nom", "Le nom doit comporter au plus 40 caractères significatifs !");
+		Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "nom", "Le nom doit comporter au plus 40 caractères significatifs !");
 	}
 	if (($longueur=strlen($prenom = trim($donnees["prenom"]))) < 2)
 	{
 		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "prenom", "Le prénom doit comporter au moins 2 caractères significatifs !");
+		Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "prenom", "Le prénom doit comporter au moins 2 caractères significatifs !");
 	}
 	else if ($longueur > 40)
 	{
 		$erreurPresente = true;
-		Form_SetError(APP_FORM_INSCRIPTION_JOUEUR["id"], "prenom", "Le prénom doit comporter au plus 40 caractères significatifs !");
+		Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "prenom", "Le prénom doit comporter au plus 40 caractères significatifs !");
 	}
+    if (($longueur=strlen($prenom = trim($donnees["telephone"]))) < 2)
+    {
+        $erreurPresente = true;
+        Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "telephone", "Le téléphone doit comporter au moins 2 caractères significatifs !");
+    }
+    else if ($longueur > 40)
+    {
+        $erreurPresente = true;
+        Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "telephone", "Le téléphone doit comporter au plus 40 caractères significatifs !");
+    }
+    if (($longueur=strlen($prenom = trim($donnees["telephone"]))) < 2)
+    {
+        $erreurPresente = true;
+        Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "dateNaissance", "La date de naissance doit comporter au moins 2 caractères significatifs !");
+    }
+    else if ($longueur > 40)
+    {
+        $erreurPresente = true;
+        Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "dateNaissance", "La date de naissance doit comporter au plus 40 caractères significatifs !");
+    }
+    if (($longueur=strlen($prenom = trim($donnees["adresse"]))) < 2)
+    {
+        $erreurPresente = true;
+        Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "adresse", "L'adresse doit comporter au moins 2 caractères significatifs !");
+    }
+    else if ($longueur > 40)
+    {
+        $erreurPresente = true;
+        Form_SetError(APP_FORM_GESTION_UTILISATEUR["id"], "adresse", "L'adresse doit comporter au plus 40 caractères significatifs !");
+    }
 	if (!$erreurPresente)
 	{
 		$resultat = MySql_Value
