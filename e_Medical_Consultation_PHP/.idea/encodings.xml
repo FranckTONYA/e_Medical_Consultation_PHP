@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/_lib/pdweb.php" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/inc/consultation.php" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/inc/inscription.php" charset="windows-1252" />
   </component>
 </project>

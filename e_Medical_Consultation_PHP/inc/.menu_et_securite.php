@@ -2,10 +2,10 @@
 Pdweb_IncludeLib("pdweb.mysql.php");
 Pdweb_Include("*/inc/.app.php");
 
-define("APP_ROLE_VISITEUR",         "V");
-define("APP_ROLE_ADMINISTRATEUR",   "A");
-define("APP_ROLE_MEDECIN",          "M");
-define("APP_ROLE_PATIENT",          "P");
+define("APP_ROLE_VISITEUR",         "Visiteur");
+define("APP_ROLE_ADMINISTRATEUR",   "Administrateur");
+define("APP_ROLE_MEDECIN",          "Medecin");
+define("APP_ROLE_PATIENT",          "Patient");
 
 define("APP_MENU", array
 (
@@ -19,26 +19,36 @@ define("APP_MENU", array
 		"sousTitre" => "Accueil",
 		"corpsPage" => "Accueil/Afficher"
 	),
-	"AUTHENTIFICATION" => array
-	(
-		"id" => "AUTHENTIFICATION",
-		"acces" => array(APP_ROLE_VISITEUR),
-		"libelleMenu" => "Authentifiez-vous",
-		"infoBulleMenu" => "Authentifiez-vous pour pouvoir accéder aux fonctionnalités",
-		"urlVue" => "*/index.php",
-		"sousTitre" => "Authentification",
-		"corpsPage" => "Authentification/Afficher"
-	),
-	"AUTHENTIFICATION_MDP" => array
-	(
-		"id" => "AUTHENTIFICATION_MDP",
-		"acces" => array(APP_ROLE_VISITEUR),
-		"libelleMenu" => null,
-		"infoBulleMenu" => null,
-		"urlVue" => "*/index.php",
-		"sousTitre" => "Changement du mot de passe",
-		"corpsPage" => "Authentification/AfficherMdp"
-	),
+    "AUTHENTIFICATION_ADMIN" => array
+    (
+        "id" => "AUTHENTIFICATION_ADMIN",
+        "acces" => array(APP_ROLE_VISITEUR),
+        "libelleMenu" => "Connexion/Admin",
+        "infoBulleMenu" => "Authentifiez-vous pour pouvoir accéder aux fonctionnalités",
+        "urlVue" => "*/index.php",
+        "sousTitre" => "Authentification",
+        "corpsPage" => "Authentification/Admin"
+    ),
+    "AUTHENTIFICATION_MEDECIN" => array
+    (
+        "id" => "AUTHENTIFICATION_MEDECIN",
+        "acces" => array(APP_ROLE_VISITEUR),
+        "libelleMenu" => "Connexion/Medecin",
+        "infoBulleMenu" => "Authentifiez-vous pour pouvoir accéder aux fonctionnalités",
+        "urlVue" => "*/index.php",
+        "sousTitre" => "Authentification",
+        "corpsPage" => "Authentification/Medecin"
+    ),
+    "AUTHENTIFICATION_PATIENT" => array
+    (
+        "id" => "AUTHENTIFICATION_MEDECIN",
+        "acces" => array(APP_ROLE_VISITEUR),
+        "libelleMenu" => "Connexion/Patient",
+        "infoBulleMenu" => "Authentifiez-vous pour pouvoir accéder aux fonctionnalités",
+        "urlVue" => "*/index.php",
+        "sousTitre" => "Authentification",
+        "corpsPage" => "Authentification/Patient"
+    ),
 	"DECONNEXION" => array
 	(
 		"id" => "DECONNEXION",
@@ -49,16 +59,16 @@ define("APP_MENU", array
 		"sousTitre" => false,
 		"corpsPage" => "Authentification/Deconnecter"
 	),
-	"TABLEAU_DE_BORD" => array
-	(
-		"id" => "TABLEAU_DE_BORD",
-		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
-		"libelleMenu" => "Tableau de bord",
-		"infoBulleMenu" => "Votre page personnelle affichant vos informations",
-		"urlVue" => "*/index.php",
-		"sousTitre" => "Tableau de bord de " . App_DenominationUtilisateur(),
-		"corpsPage" => App_EstAdministrateur() ? "Admin/AfficherAccueil" : (App_EstMedecin() ? "Medecin/AfficherAccueil" : "Patient/AfficherAccueil")
-	),
+//	"TABLEAU_DE_BORD" => array
+//	(
+//		"id" => "TABLEAU_DE_BORD",
+//		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
+//		"libelleMenu" => "Tableau de bord",
+//		"infoBulleMenu" => "Votre page personnelle affichant vos informations",
+//		"urlVue" => "*/index.php",
+//		"sousTitre" => "Tableau de bord de " . App_DenominationUtilisateur(),
+//		"corpsPage" => App_EstAdministrateur() ? "Admin/AfficherAccueil" : (App_EstMedecin() ? "Medecin/AfficherAccueil" : "Patient/AfficherAccueil")
+//	),
     "CRUD_UTILISATEUR" => array
     (
         "id" => "UTILISATEURS",
@@ -121,13 +131,13 @@ define("APP_MENU", array
     ),
 	"CRUD_CONSULTATION" => array
 	(
-		"id" => "CONSULTATIONS",
+		"id" => "CRUD_CONSULTATION",
 		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
 		"libelleMenu" => "Consultations",
 		"infoBulleMenu" => "Gestion des consultations",
 		"urlVue" => "*/index.php",
 		"sousTitre" => "Consultations de " . App_DenominationUtilisateur(),
-		"corpsPage" => App_EstAdministrateur() ? "Admin/AfficherConsultations" : (App_EstMedecin() ? "Medecin/AfficherConsultations" : "Patient/AfficherConsultations")
+		"corpsPage" => "Consultation/AfficherListe"
 	),
     "CRUD_CONSULTATION_AJOUT" => array
     (

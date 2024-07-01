@@ -41,19 +41,19 @@ define("APP_FORM_CONSULTATION", array
 		(
 			"name" => "creer",
 			"type" => "submit",
-			"value" => "?1? ce rendez-vous",
+			"value" => "?1? cette consultation",
 		),
         array
         (
             "name" => "enregistrer",
             "type" => "submit",
-            "value" => "?2? ce rendez-vous",
+            "value" => "?2? cette consultation",
         ),
         array
         (
             "name" => "supprimer",
             "type" => "submit",
-            "value" => "?3? ce rendez-vous",
+            "value" => "?3? cette consultation",
         )
 	)
 ));
@@ -63,12 +63,12 @@ function FormulaireAjout()
 	return FormulaireAdapte(array("1" => "Ajouter", "2"=>"Ajouter"));
 }
 
-function FormulaireEdition($idConsultation, $rapport = null, $prescription = null, $patient = null, $medecin = null)
+function FormulaireEdition($idConsultation, $motif = null, $rapport = null, $prescription = null, $patient = null, $medecin = null)
 {
 	$formulaire = FormulaireAdapte(array("1" => "Modifier", "2"=>"Modifier"));
     if (Form_GetValue($formulaire["id"], "motif") === false)
     {
-        Form_SetValue($formulaire["id"], "motif", $rapport);
+        Form_SetValue($formulaire["id"], "motif", $motif);
     }
 	if (Form_GetValue($formulaire["id"], "rapport") === false)
 	{
@@ -115,7 +115,7 @@ function FormulaireAdapte($remplacements)
 
 function Consultation_AfficherListe()
 {
-	if (!App_EstAdministrateur()) Http_Redirect("*/");
+	if (!App_EstAdministrateur() && !App_EstMedecin() && !App_EstPatient()) Http_Redirect("*/");
 	Form_ClearErrors(APP_FORM_CONSULTATION["id"]);
 	Form_ClearValues(APP_FORM_CONSULTATION["id"]);
 	Html_GenerateG("section", HTML_CONTENT, function ()
@@ -177,9 +177,12 @@ function Consultation_AfficherListe()
                         utilisateur 
                     WHERE utilisateur.id = ?
                     ORDER BY
-                        utilisateur.nom ASC", $enregistrement["dossier_ref_patient"]) as $enregistrement["patient"])
-
+                        utilisateur.nom ASC", array($enregistrement["dossier_ref_patient"])) as $enregistrement["patient"]);
+                var_dump($enregistrement);
 				{
+                    var_dump("Passer 1");
+                    var_dump($enregistrement);
+
 					Html_GenerateG("tr", HTML_CONTENT, function($enregistrement)
 					{
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["motif"]);
@@ -187,13 +190,10 @@ function Consultation_AfficherListe()
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["prescription"]);
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["patient"]["patient_nom"]);
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["medecin_nom"]);
+
 						Html_GenerateG("td", HTML_CONTENT, function($enregistrement)
 						{
-							GenererHtmlImage($enregistrement["id"]);
-						}, $enregistrement);
-						Html_GenerateG("td", HTML_CONTENT, function($enregistrement)
-						{
-							Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION&id=$enregistrement[id]"), "class", "bouton", "title", "Éditer cette consultation", HTML_CONTENT, "E");
+							Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION&id=$enregistrement[id]"), "class", "bouton", "title", "Éditer cette consultation", HTML_CONTENT, "E");
 						}, $enregistrement);
 
 						$parametres = array("td");
@@ -211,7 +211,7 @@ function Consultation_AfficherListe()
 				{
 					Html_GenerateG("td", "colspan", 4, HTML_CONTENT, function()
 					{
-						Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_AJOUT"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Ajouter une illustration");
+						Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_AJOUT"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Ajouter une consultation");
 					});
 				});
 			});
@@ -231,20 +231,16 @@ function Consultation_AfficherAjout()
 
 function Consultation_AfficherEdition()
 {
-	if (!App_EstAdministrateur()) Http_Redirect("*/");
-	if (!isset($_GET["id"])
-		|| (($motif = MySql_Value(
-				"SELECT motif FROM consultation WHERE id = ?",
-				array($idConsultation=$_GET["id"]),
-				false)) === false))
+	if (!App_EstAdministrateur() && !App_EstMedecin()) Http_Redirect("*/");
+	if (!isset($_GET["id"]))
 	{
 		Http_Redirect("*/");
 	}
 	Html_GenerateG("section", HTML_CONTENT, function ($idConsultation, $motif)
 	{
 		Html_GenerateForm(FormulaireEdition($idConsultation, $motif));
-		Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Retourner à la liste des consultations");
-	}, $idConsultation, $motif);
+		Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_AJOUT"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Retourner à la liste des consultations");
+	});
 }
 
 function Consultation_Ajouter($donnees)
