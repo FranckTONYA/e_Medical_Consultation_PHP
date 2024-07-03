@@ -7,7 +7,7 @@ if (!defined("CHARSET_ANSI")) define("CHARSET_ANSI", "windows-1252");
 if (!defined("CHARSET_UTF8")) define("CHARSET_UTF8", "utf-8");
 
 // Configuration de ce site vis � vis de la bilioth�que PDWEB
-define("PDWEB_CHARSET", CHARSET_ANSI);
+define("PDWEB_CHARSET", CHARSET_UTF8);
 define("PDWEB_LIB_PATH", "_lib");
 
 // Configuration de ce site vis � vis de l'application ici pr�sente

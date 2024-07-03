@@ -90,7 +90,7 @@ function App_IdPageActuelle()
 				break;
 			}
 		}
-		if (!isset($_SESSION["page"])) die("<p>Il n'existe aucun point du menu accessible au r�le d'utilisateur de type '" . App_RoleActuel() . "' !</p>");
+		if (!isset($_SESSION["page"])) die("<p>Il n'existe aucun point du menu accessible au rôle d'utilisateur de type '" . App_RoleActuel() . "' !</p>");
 	}
 	return $_SESSION["page"]["id"];
 }
@@ -108,7 +108,7 @@ function App_EstPageActuelle($idPage)
 function App_SousTitreActuel()
 {
 	Session_CheckAvailability();
-	if (!isset($_SESSION["page"]) || !is_array($_SESSION["page"])) die("<p>La page actuelle n'a pas �t� d�finie !</p>");
+	if (!isset($_SESSION["page"]) || !is_array($_SESSION["page"])) die("<p>La page actuelle n'a pas été définie !</p>");
 	return isset($_SESSION["page"]["sousTitre"]) && is_string($_SESSION["page"]["sousTitre"]) && !empty($_SESSION["page"]["sousTitre"])
 	     ? $_SESSION["page"]["sousTitre"]
 		 : false;
@@ -117,19 +117,19 @@ function App_SousTitreActuel()
 function App_GenerateurCorpsPage()
 {
 	Session_CheckAvailability();
-	if (!isset($_SESSION["page"]) || !is_array($_SESSION["page"])) die("<p>La page actuelle n'a pas �t� d�finie !</p>");
+	if (!isset($_SESSION["page"]) || !is_array($_SESSION["page"])) die("<p>La page actuelle n'a pas été définie !</p>");
 	$parties = explode("/", $_SESSION["page"]["corpsPage"]);
-	if (count($parties) != 2) die("<p>Le g�n�rateur de corps de page n'est pas correctement d�fini !</p>");
+	if (count($parties) != 2) die("<p>Le générateur de corps de page n'est pas correctement défini !</p>");
 	$nomFichier = "*/inc/" . strtolower($parties[0]) . ".php";
-	if (!Pdweb_Include($nomFichier)) die("<p>Le g�n�rateur de corps de page fait r�f�rence � une partie dont le fichier n'existe pas !</p>");
+	if (!Pdweb_Include($nomFichier)) die("<p>Le générateur de corps de page fait référence à une partie dont le fichier n'existe pas !</p>");
 	$nomFonction = $parties[0] . "_" . $parties[1];
-	if (!is_callable($nomFonction)) die("<p>Le g�n�rateur de corps de page fait r�f�rence � une fonction inexistante !</p>");
+	if (!is_callable($nomFonction)) die("<p>Le générateur de corps de page fait référence à une fonction inexistante !</p>");
 	return $nomFonction;
 }
 
 function App_RedirigerVersPage($idPage, ...$params)
 {
-	if (!App_PageEstAccessible($idPage)) die("<p>La page $idPage n'est pas d�finie, ou n'est pas accessible au role " . App_RoleActuel() . " !</p>");
+	if (!App_PageEstAccessible($idPage)) die("<p>La page $idPage n'est pas définie, ou n'est pas accessible au role " . App_RoleActuel() . " !</p>");
 	$parametresGet = "";
 	$cle = false;
 	foreach ($params as $valeur)

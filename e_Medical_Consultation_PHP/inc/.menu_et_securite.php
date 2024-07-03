@@ -14,7 +14,7 @@ define("APP_MENU", array
 		"id" => "ACCUEIL",
 		"acces" => array(APP_ROLE_VISITEUR, APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
 		"libelleMenu" => "Accueil",
-		"infoBulleMenu" => "Informations g�n�rales sur le site",
+		"infoBulleMenu" => "Informations générales sur le site",
 		"urlVue" => "*/index.php",
 		"sousTitre" => "Accueil",
 		"corpsPage" => "Accueil/Afficher"
@@ -53,8 +53,8 @@ define("APP_MENU", array
 	(
 		"id" => "DECONNEXION",
 		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
-		"libelleMenu" => "D�connectez-vous",
-		"infoBulleMenu" => "Pour des raisons de s�curit�, pensez � vous d�connecter du site en fin d'utilisation",
+		"libelleMenu" => "Déconnectez-vous",
+		"infoBulleMenu" => "Pour des raisons de sécurité, pensez à vous déconnecter du site en fin d'utilisation",
 		"urlVue" => "*/index.php",
 		"sousTitre" => false,
 		"corpsPage" => "Authentification/Deconnecter"
@@ -86,7 +86,7 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Ajout d'un utilisateur par " . App_DenominationUtilisateur(),
+        "sousTitre" => "Ajout d'un utilisateur par " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
         "corpsPage" => "Utilisateur/AfficherAjout"
     ),
     "CRUD_UTILISATEUR_EDITION" => array
@@ -96,7 +96,7 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Modification d'un utilisateur par " . App_DenominationUtilisateur(),
+        "sousTitre" => "Modification d'un utilisateur par " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
         "corpsPage" => "Utilisateur/AfficherEdition"
     ),
 	"CRUD_DOSSIER_PATIENT" => array
@@ -106,7 +106,7 @@ define("APP_MENU", array
 		"libelleMenu" => "Dossiers Patiens",
 		"infoBulleMenu" => "Gestion des dossiers patients",
 		"urlVue" => "*/index.php",
-		"sousTitre" => "Dossier Patients de " . App_DenominationUtilisateur(),
+		"sousTitre" => "Dossier Patients de " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
 		"corpsPage" => App_EstAdministrateur() ? "Admin/AfficherDossiers" : "Medecin/AfficherDossiers"
 	),
     "CRUD_DOSSIER_PATIENT_AJOUT" => array
@@ -116,7 +116,7 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Ajout d'un dossier patient pour " . App_DenominationUtilisateur(),
+        "sousTitre" => "Ajout d'un dossier patient pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
         "corpsPage" => "DossierPatient/AfficherAjout"
     ),
     "CRUD_DOSSIER_PATIENT_EDITION" => array
@@ -126,7 +126,7 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Modification d'un dossier patient pour " . App_DenominationUtilisateur(),
+        "sousTitre" => "Modification d'un dossier patient pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
         "corpsPage" => "DossierPatient/AfficherEdition"
     ),
 	"CRUD_CONSULTATION" => array
@@ -136,7 +136,7 @@ define("APP_MENU", array
 		"libelleMenu" => "Consultations",
 		"infoBulleMenu" => "Gestion des consultations",
 		"urlVue" => "*/index.php",
-		"sousTitre" => "Consultations de " . App_DenominationUtilisateur(),
+		"sousTitre" => "Consultations de " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
 		"corpsPage" => "Consultation/AfficherListe"
 	),
     "CRUD_CONSULTATION_AJOUT" => array
@@ -146,8 +146,8 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Ajout d'une consultation pour " . App_DenominationUtilisateur(),
-        "corpsPage" => "Consultation/AfficherAjout"
+        "sousTitre" => "Ajout d'une consultation pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
+        "corpsPage" => "Consultation/AfficherFormulaire"
     ),
     "CRUD_CONSULTATION_EDITION" => array
     (
@@ -156,8 +156,8 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Modification d'une consultation pour " . App_DenominationUtilisateur(),
-        "corpsPage" => "Consultation/AfficherEdition"
+        "sousTitre" => "Modification d'une consultation pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
+        "corpsPage" => "Consultation/AfficherFormulaire"
     ),
     "CRUD_RENDEZVOUS" => array
     (
@@ -166,7 +166,7 @@ define("APP_MENU", array
         "libelleMenu" => "Rendez-vous",
         "infoBulleMenu" => "Gestion des Rendez-vous médical",
         "urlVue" => "*/index.php",
-        "sousTitre" => "Rendez-vous de " . App_DenominationUtilisateur(),
+        "sousTitre" => "Rendez-vous de " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
         "corpsPage" => App_EstAdministrateur() ? "Admin/AfficherRendezVous" : (App_EstMedecin() ? "Medecin/AfficherRendezVous" : "Patient/AfficherRendezVous")
     ),
     "CRUD_RENDEZ_VOUS_AJOUT" => array
@@ -176,7 +176,7 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Ajout d'un rendez-vous pour " . App_DenominationUtilisateur(),
+        "sousTitre" => "Ajout d'un rendez-vous pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
         "corpsPage" => "RendezVous/AfficherAjout"
     ),
     "CRUD_RENDEZ_VOUS_EDITION" => array
@@ -186,7 +186,7 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Modification d'un rendez vous pour " . App_DenominationUtilisateur(),
+        "sousTitre" => "Modification d'un rendez vous pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
         "corpsPage" => "RendezVous/AfficherEdition"
     )
 ));

@@ -58,61 +58,6 @@ define("APP_FORM_CONSULTATION", array
 	)
 ));
 
-function FormulaireAjout()
-{
-	return FormulaireAdapte(array("1" => "Ajouter", "2"=>"Ajouter"));
-}
-
-function FormulaireEdition($idConsultation, $motif = null, $rapport = null, $prescription = null, $patient = null, $medecin = null)
-{
-	$formulaire = FormulaireAdapte(array("1" => "Modifier", "2"=>"Modifier"));
-    if (Form_GetValue($formulaire["id"], "motif") === false)
-    {
-        Form_SetValue($formulaire["id"], "motif", $motif);
-    }
-	if (Form_GetValue($formulaire["id"], "rapport") === false)
-	{
-		Form_SetValue($formulaire["id"], "rapport", $rapport);
-	}
-    if (Form_GetValue($formulaire["id"], "prescription") === false)
-    {
-        Form_SetValue($formulaire["id"], "prescription", $prescription);
-    }
-    if (Form_GetValue($formulaire["id"], "patient") === false)
-    {
-        Form_SetValue($formulaire["id"], "patient", $patient);
-    }
-    if (Form_GetValue($formulaire["id"], "medecin") === false)
-    {
-        Form_SetValue($formulaire["id"], "medecin", $medecin);
-    }
-
-	$formulaire["elements"][] = array
-	(
-		"name" => "id_consultation",
-		"type" => "hidden",
-		"value" => $idConsultation
-	);
-	return $formulaire;
-}
-
-function FormulaireAdapte($remplacements)
-{
-	$formulaire = APP_FORM_CONSULTATION;
-	foreach ($formulaire["elements"] as $indice=>$element)
-	{
-		if (isset($formulaire["elements"][$indice]["value"]) && (strpos($valeur=$formulaire["elements"][$indice]["value"], "?") !== false))
-		{
-			foreach ($remplacements as $cle=>$texte)
-			{
-				$valeur = str_replace("?$cle?", $texte, $valeur);
-			}
-			$formulaire["elements"][$indice]["value"] = $valeur;
-		}
-	}
-	return $formulaire;
-}
-
 function Consultation_AfficherListe()
 {
 	if (!App_EstAdministrateur() && !App_EstMedecin() && !App_EstPatient()) Http_Redirect("*/");
@@ -147,59 +92,44 @@ function Consultation_AfficherListe()
                         dossier_patient.ref_patient AS dossier_ref_patient,
                         utilisateur.id AS medecin_id,
                         utilisateur.email AS medecin_email,
-                        utilisateur.password AS medecin_motDePasse,
-                        utilisateur.token AS medecin_token,
                         utilisateur.nom AS medecin_nom,
-                        utilisateur.prenom AS medecin_prenom,
-                        utilisateur.telephone AS medecin_telephone,
-                        utilisateur.date_naissance AS medecin_dateNaissance,
-                        utilisateur.adresse AS medecin_adresse
+                        utilisateur.prenom AS medecin_prenom
                     FROM
                         consultation 
                             LEFT JOIN utilisateur ON consultation.ref_medecin = utilisateur.id 
                             LEFT JOIN dossier_patient ON consultation.ref_dossier = dossier_patient.id
                     ORDER BY
-                        utilisateur.nom ASC") as $enregistrement);
+                        utilisateur.nom ASC") as $enregistrement)
 
-//                Récupérer le patient associé au dossier patient
-                    foreach (MySql_Rows(
-                        "SELECT
-                        utilisateur.id AS patient_id,
-                        utilisateur.email AS patient_email,
-                        utilisateur.password AS patient_motDePasse,
-                        utilisateur.token AS patient_token,
-                        utilisateur.nom AS patient_nom,
-                        utilisateur.prenom AS patient_prenom,
-                        utilisateur.telephone AS patient_telephone,
-                        utilisateur.date_naissance AS patient_dateNaissance,
-                        utilisateur.adresse AS patient_adresse
-                    FROM
-                        utilisateur 
-                    WHERE utilisateur.id = ?
-                    ORDER BY
-                        utilisateur.nom ASC", array($enregistrement["dossier_ref_patient"])) as $enregistrement["patient"]);
-                var_dump($enregistrement);
 				{
-                    var_dump("Passer 1");
-                    var_dump($enregistrement);
+                    // Récupérer le patient associé au dossier patient
+                    $enregistrement["patient"] = MySql_Row(
+                                 "SELECT
+                        utilisateur.id AS id,
+                        utilisateur.email AS email,
+                        utilisateur.nom AS nom,
+                        utilisateur.prenom AS prenom
+                    FROM
+                        utilisateur
+                    WHERE utilisateur.id = ?", array($enregistrement["dossier_ref_patient"]));
 
 					Html_GenerateG("tr", HTML_CONTENT, function($enregistrement)
 					{
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["motif"]);
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["rapport"]);
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["prescription"]);
-                        Html_GenerateOC("td", HTML_CONTENT, $enregistrement["patient"]["patient_nom"]);
-                        Html_GenerateOC("td", HTML_CONTENT, $enregistrement["medecin_nom"]);
+                        Html_GenerateOC("td", HTML_CONTENT, $enregistrement["patient"]["nom"]. " " . $enregistrement["patient"]["prenom"]);
+                        Html_GenerateOC("td", HTML_CONTENT, $enregistrement["medecin_nom"]. " " . $enregistrement["medecin_prenom"]);
 
 						Html_GenerateG("td", HTML_CONTENT, function($enregistrement)
 						{
-							Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION&id=$enregistrement[id]"), "class", "bouton", "title", "Éditer cette consultation", HTML_CONTENT, "E");
+							Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Éditer cette consultation", HTML_CONTENT, "E");
 						}, $enregistrement);
 
 						$parametres = array("td");
 						$parametres = array_merge($parametres, array(HTML_CONTENT, function($enregistrement)
 						{
-                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("Consultation/Supprimer") . "&id=$enregistrement[id]"), "class", "bouton", "title", "Supprimer cette consultation", HTML_CONTENT, "S");
+                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("Consultation/Supprimer") . "&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Supprimer cette consultation", HTML_CONTENT, "S");
 						}, $enregistrement));
 						Html_GenerateG(...$parametres);
 					}, $enregistrement);
@@ -219,101 +149,133 @@ function Consultation_AfficherListe()
 	});
 }
 
-function Consultation_AfficherAjout()
-{
-	if (!App_EstAdministrateur()()) Http_Redirect("*/");
-	Html_GenerateG("section", HTML_CONTENT, function ()
-	{
-		Html_GenerateForm(FormulaireAjout());
-		Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_IMAGE"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Retourner à la liste des Consultations");
-	});
-}
-
-function Consultation_AfficherEdition()
+function Consultation_AfficherFormulaire()
 {
 	if (!App_EstAdministrateur() && !App_EstMedecin()) Http_Redirect("*/");
-	if (!isset($_GET["id"]))
-	{
-		Http_Redirect("*/");
-	}
-	Html_GenerateG("section", HTML_CONTENT, function ($idConsultation, $motif)
-	{
-		Html_GenerateForm(FormulaireEdition($idConsultation, $motif));
-		Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_AJOUT"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Retourner à la liste des consultations");
-	});
-}
 
-function Consultation_Ajouter($donnees)
-{
-	EnregistrerConsultation(FormulaireAjout(), 0, $donnees);
-}
-
-function Consultation_Modifier($donnees)
-{
-	if (!isset($donnees["id_consultation"])) Http_Redirect("*/");
-	$idConsultation = $donnees["id_consultation"];
-	EnregistrerConsultation(FormulaireEdition($donnees["id_consultation"]), $idConsultation, $donnees);
-}
-
-function EnregistrerConsultation($formulaire, $idConsultation, $donnees)
-{
-	if (!App_EstAdministrateur()) Http_Redirect("*/");
-	if (!isset($donnees["consultation"])) Http_Redirect("*/");
-	$estEnAjout = ($idConsultation == 0);
-	Form_ClearErrors($formulaire["id"]);
-	Form_ClearValues($formulaire["id"]);
-	$erreurPresente = false;
-    $rapport = trim($donnees["rapport"]);
-    $prescription = trim($donnees["prescription"]);
-
-	if (($longueur=strlen($motif = trim($donnees["motif"]))) < 1)
+    // si formulaire en Modification
+	if (isset($_GET["id"]))
 	{
-		$erreurPresente = true;
-		Form_SetError($formulaire["id"], "motif", "Le motif doit comporter au moins un caractère significatif !");
-	}
-	else if ($longueur > 80)
-	{
-		$erreurPresente = true;
-		Form_SetError($formulaire["id"], "motif", "Le motif doit comporter au plus 80 caractères significatifs !");
-	}
+        // Récupérer la consultation à modifier
+        $consultation = MySql_Row("SELECT
+                        consultation.id AS consultation_id,
+                        consultation.motif AS motif,
+                        consultation.prescription AS prescription,
+                        consultation.rapport AS rapport,
+                        dossier_patient.id AS dossier_id,
+                        dossier_patient.description AS dossier_description,
+                        dossier_patient.ref_patient AS dossier_ref_patient,
+                        utilisateur.id AS medecin_id,
+                        utilisateur.email AS medecin_email,
+                        utilisateur.nom AS medecin_nom,
+                        utilisateur.prenom AS medecin_prenom
+                    FROM
+                        consultation 
+                            LEFT JOIN utilisateur ON consultation.ref_medecin = utilisateur.id 
+                            LEFT JOIN dossier_patient ON consultation.ref_dossier = dossier_patient.id
+                    WHERE consultation.id = ?", array($idConsultation=$_GET["id"]));
 
-	if (!$erreurPresente)
-	{
-		if ($estEnAjout)
-		{
-			$resultat = MySql_Execute("INSERT INTO consultation SET motif = ?, rapport = ?, prescription = ?;", array($motif, $rapport, $prescription));
-		}
-		else
-		{
-			$resultat = MySql_Execute("UPDATE consultation SET motif = ?, rapport = ?, prescription = ? WHERE id = ?;", array($motif, $rapport, $prescription, $idConsultation));
-		}
-		if (!Pdweb_IsInteger($resultat))
-		{
-			$erreurPresente = true;
-			Form_SetError($formulaire["id"], "enregistrer", "Erreur interne !");
-		}
-		else
-		{
-            $erreurPresente = true;
-            Form_SetError($formulaire["id"], "motif", "Erreur motif !");
+        if ($consultation !== false){
+            $medecin["id"] = $consultation["medecin_id"];
+            $medecin["email"] = $consultation["medecin_email"];
+            $medecin["nom"] = $consultation["medecin_nom"];
+            $medecin["prenom"] = $consultation["medecin_prenom"];
+
+            $motif = $consultation["motif"];
+            $rapport = $consultation["rapport"];
+            $prescription = $consultation["prescription"];
+
+            // Récupérer le patient associé à la consultation
+            $patient = MySql_Row("SELECT
+                        utilisateur.id AS id,
+                        utilisateur.email AS email,
+                        utilisateur.nom AS nom,
+                        utilisateur.prenom AS prenom
+                    FROM
+                        utilisateur 
+                    WHERE utilisateur.id = ?", array($consultation["dossier_ref_patient"]));
+
+            if ($patient !== false){
+                // Récupérer la liste de tous les patients exitants pour un éventuel changement de patient lié à la consultation
+                $listePatients = ListePatients();
+
+                // Récupérer la liste de tous les médecins exitants pour un éventuel changement de médecin lié à la consultation
+                $listeMedecins = ListeMedecins();
+
+            }else{
+                Http_Redirect("*/");
+            }
+        }else{
+            Http_Redirect("*/");
         }
+	}
+    else{ // Formulaire en Ajout
+        // Récupérer la liste de tous les patients exitants pour un éventuel changement de patient lié à la consultation
+        $listePatients = ListePatients();
 
-	}
-	if ($erreurPresente)
+        // Récupérer la liste de tous les médecins exitants pour un éventuel changement de médecin lié à la consultation
+        $listeMedecins = ListeMedecins();
+    }
+
+	Html_GenerateG("section", HTML_CONTENT, function ($idConsultation, $motif, $rapport, $prescription, $patient, $medecin, $listePatients, $listeMedecins)
 	{
-		Form_SetValue($formulaire["id"], "motif", $motif);
-		if ($estEnAjout)
-			App_RedirigerVersPage("CRUD_CONSULTATION_AJOUT");
-		else
-			App_RedirigerVersPage("CRUD_CONSULTATION_EDITION", "id", $idConsultation);
-	}
-	else
-	{
-		App_CreerFlashInfo("Votre consultation \"$motif\" a bien été " . ($estEnAjout ? "ajoutée." : "modifiée."));
-		App_RedirigerVersPage("CRUD_CONSULTATION");
-	}
+        // Vérifier si le formulaire a été soumis
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $messageErreur = TraitementFormulaire($_POST);
+            if (isset($messageErreur)){
+                FormulaireConsultation($motif, $rapport, $prescription, $patient, $medecin, $listePatients, $listeMedecins, $messageErreur);
+            }
+        } else {
+            FormulaireConsultation($motif, $rapport, $prescription, $patient, $medecin, $listePatients, $listeMedecins);
+        }
+//		Html_GenerateForm(FormulaireEdition($idConsultation, $motif, $rapport, $prescription, $patient, $medecin, $listeMedecins, $listePatients));
+		Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION"), "class", "bouton", "title", "Liste des consultations", HTML_CONTENT, "Retourner à la liste des consultations");
+	}, $idConsultation, $motif, $rapport, $prescription, $patient, $medecin, $listePatients, $listeMedecins);
 }
 
+function ListePatients()
+{
+    foreach (MySql_Rows(
+                 "SELECT
+                        utilisateur.id AS id,
+                        utilisateur.email AS email,
+                        utilisateur.nom AS nom,
+                        utilisateur.prenom AS prenom,
+                        role_utilisateur.id AS role_id,
+                        role_utilisateur.nom AS role_nom,                        
+                        role_utilisateur.description AS role_description
+                    FROM
+                        utilisateur LEFT JOIN role_utilisateur ON utilisateur.ref_role = role_utilisateur.id 
+                    WHERE role_utilisateur.id = ?
+                    ORDER BY
+                        utilisateur.nom ASC", array(3) )as $enregistrement){
+        $listePatients[] = $enregistrement;
+    }
+
+    return $listePatients;
+}
+
+function ListeMedecins()
+{
+    foreach (MySql_Rows(
+                 "SELECT
+                        utilisateur.id AS id,
+                        utilisateur.email AS email,
+                        utilisateur.nom AS nom,
+                        utilisateur.prenom AS prenom,
+                        role_utilisateur.id AS role_id,
+                        role_utilisateur.nom AS role_nom,
+                        role_utilisateur.description AS role_description
+                    FROM
+                        utilisateur LEFT JOIN role_utilisateur ON utilisateur.ref_role = role_utilisateur.id 
+                    WHERE role_utilisateur.id = ?
+                    ORDER BY
+                        utilisateur.nom ASC", array(2) ) as $enregistrement){
+        $listeMedecins[] = $enregistrement;
+    }
+
+    return $listeMedecins;
+}
 function Consultation_Supprimer($donnees)
 {
 	if (!isset($donnees["id"])) Http_Redirect("*/");
@@ -326,4 +288,98 @@ function Consultation_Supprimer($donnees)
 	}
 	App_RedirigerVersPage("CRUD_CONSULTATION");
 }
+
+function FormulaireConsultation($motif = null, $rapport = null, $prescription = null, $selectedPatient = null, $selectedMedecin = null, $patients= null, $medecins= null, $messageErreur = null)
+{
+    echo '
+   <div class="container">
+            <h1>Formulaire de Consultation</h1>
+            <div class="error-message">' . $messageErreur . '</div>
+            <form action="" method="POST">
+                <label for="motif">Motif</label>
+                <input type="text" id="motif" name="motif" value="' . $motif . '" required>
+
+                <label for="rapport">Rapport</label>
+                <textarea id="rapport" name="rapport" rows="4">' . $rapport . '</textarea>
+
+                <label for="prescription">Prescription</label>
+                <textarea id="prescription" name="prescription" rows="4">' . $prescription . '</textarea>
+
+                <label for="medecin">Médecin</label>
+                <select id="medecin" name="medecin" required>
+                    <option value="" disabled ' . (empty($selectedMedecin) ? 'selected' : '') . '>Choisir un médecin</option>';
+    foreach ($medecins as $medecin) {
+        $selected = ($medecin['id'] == $selectedMedecin['id']) ? 'selected' : '';
+        echo "<option value=\"{$medecin['id']}\" $selected>{$medecin['prenom']} {$medecin['nom']}</option>";
+    }
+    echo '      </select>
+
+                <label for="patient">Patient</label>
+                <select id="patient" name="patient" required>
+                    <option value="" disabled ' . (empty($selectedPatient) ? 'selected' : '') . '>Choisir un patient</option>';
+    foreach ($patients as $patient) {
+        $selected = ($patient['id'] == $selectedPatient['id']) ? 'selected' : '';
+        echo "<option value=\"{$patient['id']}\" $selected>{$patient['prenom']} {$patient['nom']}</option>";
+    }
+    echo '      </select>
+
+                <button type="submit">Enregistrer</button>
+            </form>
+   </div>
+    ';
+}
+
+function TraitementFormulaire($donnees)
+{
+    $motif = $donnees['motif'];
+    $rapport = $donnees['rapport'];
+    $prescription = $donnees['prescription'];
+    $medecin = $donnees['medecin'];
+    $patient = $donnees['patient'];
+
+    if (!App_EstAdministrateur() && !App_EstMedecin()) Http_Redirect("*/");
+    if (!isset($donnees["motif"], $donnees["medecin"], $donnees["patient"])) Http_Redirect("*/");
+    $erreur = false;
+    $messageErreur = null;
+
+    $dossier =  MySql_Row(
+        " SELECT
+                        dossier_patient.id AS id,
+                        dossier_patient.description AS description,
+                        utilisateur.id AS patient_id
+                    FROM
+                        dossier_patient 
+                            LEFT JOIN utilisateur ON dossier_patient.ref_patient = utilisateur.id                            
+                    WHERE
+                        utilisateur.id = ?;", array($patient));
+
+    if (empty($dossier)){
+        Http_Redirect("*/");
+    }else{
+        if (isset($_GET["id"]) ) // En Modification
+        {
+            $resultat = MySql_Execute("UPDATE consultation
+                                            SET motif = ?, rapport = ?, prescription = ?, ref_medecin = ?, ref_dossier = ? 
+                                            WHERE id = ?;", array($motif, $rapport, $prescription, $medecin, $dossier["id"], $_GET["id"]));
+        }
+        else // En Ajout
+        {
+            $resultat = MySql_Execute("INSERT INTO consultation
+                                            SET motif = ?, rapport = ?, prescription = ?, ref_medecin = ?, ref_dossier = ?;",
+                                            array($motif, $rapport, $prescription, $medecin, $dossier["id"]));
+        }
+        if (Pdweb_IsInteger($resultat))
+        {
+            Http_Redirect("CRUD_CONSULTATION");
+        }else{
+            $erreur = true;
+            $messageErreur = 'Erreur interne';
+        }
+
+        if ($erreur) {
+            return $messageErreur;
+        }
+    }
+}
+
 ?>
