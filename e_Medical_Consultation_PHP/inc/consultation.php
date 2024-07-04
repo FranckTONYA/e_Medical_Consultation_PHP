@@ -6,56 +6,7 @@ define("APP_FORM_CONSULTATION", array
 	"id" => "consultation",
 	"url" => "*/.controleur.php",
 	"elements" => array
-	(
-        array
-        (
-            "name" => "motif",
-            "type" => "text",
-            "label" => "Motif :"
-        ),
-		array
-		(
-			"name" => "rapport",
-			"type" => "text",
-			"label" => "Rapport :"
-		),
-		array
-		(
-			"name" => "prescription",
-			"type" => "text",
-			"label" => "Prescription :"
-		),
-        array
-        (
-            "name" => "patient",
-            "type" => "text",
-            "label" => "Patient :"
-        ),
-        array
-        (
-            "name" => "medecin",
-            "type" => "text",
-            "label" => "Médecin :"
-        ),
-		array
-		(
-			"name" => "creer",
-			"type" => "submit",
-			"value" => "?1? cette consultation",
-		),
-        array
-        (
-            "name" => "enregistrer",
-            "type" => "submit",
-            "value" => "?2? cette consultation",
-        ),
-        array
-        (
-            "name" => "supprimer",
-            "type" => "submit",
-            "value" => "?3? cette consultation",
-        )
-	)
+	()
 ));
 
 function Consultation_AfficherListe()
@@ -75,7 +26,8 @@ function Consultation_AfficherListe()
                     Html_GenerateOC("th", HTML_CONTENT, "Rapport");
                     Html_GenerateOC("th", HTML_CONTENT, "Prescription");
                     Html_GenerateOC("th", HTML_CONTENT, "Patient");
-					Html_GenerateOC("th", HTML_CONTENT, "Médecin");
+                    Html_GenerateOC("th", HTML_CONTENT, "Médecin");
+                    Html_GenerateOC("th", HTML_CONTENT, "Rendez-vous");
 					Html_GenerateOC("th", "colspan", 2, HTML_CONTENT, "Actions");
 				});
 			});
@@ -93,11 +45,16 @@ function Consultation_AfficherListe()
                         utilisateur.id AS medecin_id,
                         utilisateur.email AS medecin_email,
                         utilisateur.nom AS medecin_nom,
-                        utilisateur.prenom AS medecin_prenom
+                        utilisateur.prenom AS medecin_prenom,
+                        rendez_vous.id AS rdv_id,
+                        rendez_vous.description AS rdv_description,
+                        rendez_vous.date AS rdv_date,
+                        rendez_vous.duree AS rdv_duree
                     FROM
                         consultation 
                             LEFT JOIN utilisateur ON consultation.ref_medecin = utilisateur.id 
                             LEFT JOIN dossier_patient ON consultation.ref_dossier = dossier_patient.id
+                            LEFT JOIN rendez_vous ON consultation.ref_rdv = rendez_vous.id
                     ORDER BY
                         utilisateur.nom ASC") as $enregistrement)
 
@@ -120,10 +77,12 @@ function Consultation_AfficherListe()
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["prescription"]);
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["patient"]["nom"]. " " . $enregistrement["patient"]["prenom"]);
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["medecin_nom"]. " " . $enregistrement["medecin_prenom"]);
+                        Html_GenerateOC("td", HTML_CONTENT, isset($enregistrement['rdv_id']) ? (date('Y-m-d', strtotime($enregistrement['rdv_date'])). " " . $enregistrement["rdv_duree"]) : "");
 
 						Html_GenerateG("td", HTML_CONTENT, function($enregistrement)
 						{
-							Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Éditer cette consultation", HTML_CONTENT, "E");
+                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Éditer cette consultation", HTML_CONTENT, "E");
+                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("Consultation/RendezVous") . "&id=$enregistrement[consultation_id]"),  "class", "bouton", "title", "Rendez-vous de cette consultation", HTML_CONTENT, "RDV");
 						}, $enregistrement);
 
 						$parametres = array("td");
@@ -132,6 +91,13 @@ function Consultation_AfficherListe()
                             Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("Consultation/Supprimer") . "&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Supprimer cette consultation", HTML_CONTENT, "S");
 						}, $enregistrement));
 						Html_GenerateG(...$parametres);
+//
+//                        $parametres = array("td");
+//                        $parametres2 = array_merge($parametres, array(HTML_CONTENT, function($enregistrement)
+//                        {
+//                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Rendez-vous de cette consultation", HTML_CONTENT, "RDV");
+//                        }, $enregistrement));
+//                        Html_GenerateG(...$parametres2);
 					}, $enregistrement);
 				}
 			});
@@ -141,7 +107,7 @@ function Consultation_AfficherListe()
 				{
 					Html_GenerateG("td", "colspan", 4, HTML_CONTENT, function()
 					{
-						Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_AJOUT"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Ajouter une consultation");
+						Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Ajouter une consultation");
 					});
 				});
 			});
@@ -151,7 +117,7 @@ function Consultation_AfficherListe()
 
 function Consultation_AfficherFormulaire()
 {
-	if (!App_EstAdministrateur() && !App_EstMedecin()) Http_Redirect("*/");
+	if (!App_EstAdministrateur() && !App_EstMedecin() && !App_EstPatient()) Http_Redirect("*/");
 
     // si formulaire en Modification
 	if (isset($_GET["id"]))
@@ -331,14 +297,15 @@ function FormulaireConsultation($motif = null, $rapport = null, $prescription = 
 
 function TraitementFormulaire($donnees)
 {
+    if (!App_EstAdministrateur() && !App_EstMedecin() && !App_EstPatient()) Http_Redirect("*/");
+    if (!isset($donnees["motif"], $donnees["medecin"], $donnees["patient"])) Http_Redirect("*/");
+
     $motif = $donnees['motif'];
     $rapport = $donnees['rapport'];
     $prescription = $donnees['prescription'];
     $medecin = $donnees['medecin'];
     $patient = $donnees['patient'];
 
-    if (!App_EstAdministrateur() && !App_EstMedecin()) Http_Redirect("*/");
-    if (!isset($donnees["motif"], $donnees["medecin"], $donnees["patient"])) Http_Redirect("*/");
     $erreur = false;
     $messageErreur = null;
 
@@ -380,6 +347,29 @@ function TraitementFormulaire($donnees)
             return $messageErreur;
         }
     }
+}
+
+function Consultation_RendezVous($donnees)
+{
+    if (!isset($donnees["id"])) Http_Redirect("*/");
+    $idConsultation = $donnees["id"];
+    $rdv =  MySql_Row(
+        " SELECT
+                    rendez_vous.id AS id,
+                    rendez_vous.description AS description,
+                    consultation.id AS consultation_id,
+                    consultation.motif AS consultation_motif,
+                    consultation.prescription AS consultation_prescription,
+                    consultation.rapport AS consultation_rapport
+                FROM rendez_vous 
+                        LEFT JOIN consultation ON rendez_vous.ref_consultation = consultation.id
+                WHERE consultation.id = ?;", array($idConsultation));
+
+   if (empty($rdv)){
+       Http_Redirect("*/.controleur.php?page=CRUD_RENDEZVOUS_EDITION&idConsultation=$idConsultation");
+   }else{
+       Http_Redirect("*/.controleur.php?page=CRUD_RENDEZVOUS_EDITION&id=$rdv[id]");
+   }
 }
 
 ?>

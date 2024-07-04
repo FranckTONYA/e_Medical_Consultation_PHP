@@ -90,18 +90,16 @@ function Authentification_Authentifier($donnees)
 
 	if (!is_array($resultat) || empty($resultat))
 	{
-        var_dump("Connexion Echec Résultat SELECT !");
 		Connexion_Erreur($email);
+        Http_Redirect("*/");
 	}
 	else if ($resultat["role"] != $_SESSION["pageConnexion"]["roleChoisi"])
 	{
-        var_dump("Connexion Echec Role !");
-
         Connexion_Erreur($email);
+        Http_Redirect("*/");
 	}
     else if (!VerifierMDP($donnees["mdp"], $resultat["utilisateur_motDePasse"]))
     {
-        var_dump("Connexion Echec MDP !");
         Connexion_Erreur($email);
         Http_Redirect("*/");
     }
@@ -109,19 +107,17 @@ function Authentification_Authentifier($donnees)
 	{
 		if (!App_ConnecterUtilisateur($resultat))
 		{
-            var_dump("Connexion Echec Connecter User !");
 			Form_SetError(APP_FORM_AUTHENTIFICATION["id"], "authentifier", "Erreur interne !");
 			Http_Redirect("*/");
 		}
-        var_dump("Connexion reussie !");
 		Form_ClearValues(APP_FORM_AUTHENTIFICATION["id"]);
         $_SESSION["utilisateur"]["denomination"] = $resultat["utilisateur_nom"] . " " . $resultat["utilisateur_prenom"];
-		App_RedirigerVersPage("CRUD_CONSULTATION");
+		App_RedirigerVersPage("ACCUEIL");
 	}
 }
 
 function Connexion_Erreur($email){
-    Form_SetError(APP_FORM_AUTHENTIFICATION["id"], "authentifier", "Le login ou le mot de passe ne semblent pas valides !");
+    Form_SetError(APP_FORM_AUTHENTIFICATION["id"], "authentifier", "Le login ou le mot de passe ne semblent pas valides !. Assurez-vous également d'avoir les bons privilèges");
     Form_SetValue(APP_FORM_AUTHENTIFICATION["id"], "email", $email);
 }
 

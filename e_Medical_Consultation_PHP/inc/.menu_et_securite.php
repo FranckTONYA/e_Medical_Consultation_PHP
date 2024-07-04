@@ -41,7 +41,7 @@ define("APP_MENU", array
     ),
     "AUTHENTIFICATION_PATIENT" => array
     (
-        "id" => "AUTHENTIFICATION_MEDECIN",
+        "id" => "AUTHENTIFICATION_PATIENT",
         "acces" => array(APP_ROLE_VISITEUR),
         "libelleMenu" => "Connexion/Patient",
         "infoBulleMenu" => "Authentifiez-vous pour pouvoir accéder aux fonctionnalités",
@@ -59,16 +59,6 @@ define("APP_MENU", array
 		"sousTitre" => false,
 		"corpsPage" => "Authentification/Deconnecter"
 	),
-//	"TABLEAU_DE_BORD" => array
-//	(
-//		"id" => "TABLEAU_DE_BORD",
-//		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
-//		"libelleMenu" => "Tableau de bord",
-//		"infoBulleMenu" => "Votre page personnelle affichant vos informations",
-//		"urlVue" => "*/index.php",
-//		"sousTitre" => "Tableau de bord de " . App_DenominationUtilisateur(),
-//		"corpsPage" => App_EstAdministrateur() ? "Admin/AfficherAccueil" : (App_EstMedecin() ? "Medecin/AfficherAccueil" : "Patient/AfficherAccueil")
-//	),
     "CRUD_UTILISATEUR" => array
     (
         "id" => "UTILISATEURS",
@@ -139,16 +129,6 @@ define("APP_MENU", array
 		"sousTitre" => "Consultations de " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
 		"corpsPage" => "Consultation/AfficherListe"
 	),
-    "CRUD_CONSULTATION_AJOUT" => array
-    (
-        "id" => "CRUD_CONSULTATION_AJOUT",
-        "acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
-        "libelleMenu" => null,
-        "infoBulleMenu" => null,
-        "urlVue" => "*/index.php",
-        "sousTitre" => "Ajout d'une consultation pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
-        "corpsPage" => "Consultation/AfficherFormulaire"
-    ),
     "CRUD_CONSULTATION_EDITION" => array
     (
         "id" => "CRUD_CONSULTATION_EDITION",
@@ -161,34 +141,24 @@ define("APP_MENU", array
     ),
     "CRUD_RENDEZVOUS" => array
     (
-        "id" => "RENDEZ_VOUS",
+        "id" => "CRUD_RENDEZVOUS",
         "acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
         "libelleMenu" => "Rendez-vous",
         "infoBulleMenu" => "Gestion des Rendez-vous médical",
         "urlVue" => "*/index.php",
         "sousTitre" => "Rendez-vous de " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
-        "corpsPage" => App_EstAdministrateur() ? "Admin/AfficherRendezVous" : (App_EstMedecin() ? "Medecin/AfficherRendezVous" : "Patient/AfficherRendezVous")
+        "corpsPage" => "RendezVous/AfficherListe"
     ),
-    "CRUD_RENDEZ_VOUS_AJOUT" => array
+    "CRUD_RENDEZVOUS_EDITION" => array
     (
-        "id" => "CRUD_RENDEZ_VOUS_AJOUT",
-        "acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
-        "libelleMenu" => null,
-        "infoBulleMenu" => null,
-        "urlVue" => "*/index.php",
-        "sousTitre" => "Ajout d'un rendez-vous pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
-        "corpsPage" => "RendezVous/AfficherAjout"
-    ),
-    "CRUD_RENDEZ_VOUS_EDITION" => array
-    (
-        "id" => "CRUD_RENDEZ_VOUS_EDITION",
+        "id" => "CRUD_RENDEZVOUS_EDITION",
         "acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
         "sousTitre" => "Modification d'un rendez vous pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
-        "corpsPage" => "RendezVous/AfficherEdition"
+        "corpsPage" => "RendezVous/AfficherFormulaire"
     )
 ));
-App_IdPageActuelle(); // Garantit que l'identifiant de page est initialis� lors de la premi�re visite du site
+App_IdPageActuelle(); // Garantit que l'identifiant de page est initialisé lors de la première visite du site
 ?>
