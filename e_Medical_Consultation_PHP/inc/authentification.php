@@ -117,7 +117,7 @@ function Authentification_Authentifier($donnees)
 }
 
 function Connexion_Erreur($email){
-    Form_SetError(APP_FORM_AUTHENTIFICATION["id"], "authentifier", "Le login ou le mot de passe ne semblent pas valides !. Assurez-vous également d'avoir les bons privilèges");
+    Form_SetError(APP_FORM_AUTHENTIFICATION["id"], "authentifier", "Le login ou le mot de passe ne semblent pas valides !. Assurez-vous également d'avoir le bon privilège");
     Form_SetValue(APP_FORM_AUTHENTIFICATION["id"], "email", $email);
 }
 

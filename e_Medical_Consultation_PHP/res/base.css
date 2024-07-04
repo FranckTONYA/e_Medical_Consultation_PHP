@@ -34,7 +34,7 @@ header h1
 }
 nav>ul
 {
-	display:table-row;	
+	display:table-row;
 }
 nav>ul>li
 {
@@ -42,7 +42,7 @@ nav>ul>li
 	text-align:center;
 	padding-left:2em;
 	padding-right:2em;
-	padding-top
+	padding-top:2em;
 }
 nav a, nav span
 {
@@ -90,7 +90,7 @@ header *, footer *
 }
 footer, footer *
 {
-	text-align:center;	
+	text-align:center;
 }
 table.crud
 {
@@ -172,4 +172,48 @@ form>ul>li>*
 form>ul>li>*.erreur
 {
 	display:table-row;
+}
+
+/**/
+
+.container {
+	max-width: 600px;
+	margin: auto;
+	background-color: white;
+	padding: 20px;
+	box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+h1 {
+	text-align: center;
+}
+label {
+	display: block;
+	margin-top: 10px;
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+input[type="text"], textarea, select {
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+.error-message {
+	color: red;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+button {
+	display: block;
+	width: 100%;
+	padding: 10px;
+	background-color: #28a745;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+button:hover {
+	background-color: #218838;
 }

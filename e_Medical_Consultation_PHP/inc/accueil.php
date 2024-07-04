@@ -5,7 +5,7 @@ function Accueil_Afficher()
 	{
 		if (($denomination = App_DenominationUtilisateur()) === false) $denomination = "nouvel utilisateur";
 		Html_GenerateOC("p", HTML_CONTENT, "Bienvenue à vous, $denomination.");
-		Html_GenerateOC("p", HTML_CONTENT, "Ce site a pour but de permettre des consultations Médicale en ligne !");
+		Html_GenerateOC("p", HTML_CONTENT, "Ce site a pour but de permettre des Consultations Médicale en ligne !");
 		if (App_EstAdministrateur())
 		{
 			Html_GenerateOC("p", HTML_CONTENT, "Vous êtes connecté en tant que " . APP_ROLE_ADMINISTRATEUR);
@@ -20,7 +20,7 @@ function Accueil_Afficher()
         }
 		else
 		{
-			Html_GenerateOC("p", HTML_CONTENT, "Vous êtes connecté en tant que " . APP_ROLE_VISITEUR);
+			Html_GenerateOC("p", HTML_CONTENT, "Vous êtes " . APP_ROLE_VISITEUR);
 		}
 	});
 }

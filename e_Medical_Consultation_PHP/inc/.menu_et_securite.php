@@ -49,16 +49,6 @@ define("APP_MENU", array
         "sousTitre" => "Authentification",
         "corpsPage" => "Authentification/Patient"
     ),
-	"DECONNEXION" => array
-	(
-		"id" => "DECONNEXION",
-		"acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
-		"libelleMenu" => "Déconnectez-vous",
-		"infoBulleMenu" => "Pour des raisons de sécurité, pensez à vous déconnecter du site en fin d'utilisation",
-		"urlVue" => "*/index.php",
-		"sousTitre" => false,
-		"corpsPage" => "Authentification/Deconnecter"
-	),
     "CRUD_UTILISATEUR" => array
     (
         "id" => "UTILISATEURS",
@@ -136,7 +126,7 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Modification d'une consultation pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
+        "sousTitre" => "Modification/Ajout d'une consultation pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
         "corpsPage" => "Consultation/AfficherFormulaire"
     ),
     "CRUD_RENDEZVOUS" => array
@@ -156,8 +146,18 @@ define("APP_MENU", array
         "libelleMenu" => null,
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
-        "sousTitre" => "Modification d'un rendez vous pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
+        "sousTitre" => "Modification/Ajout d'un rendez vous pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
         "corpsPage" => "RendezVous/AfficherFormulaire"
+    ),
+    "DECONNEXION" => array
+    (
+        "id" => "DECONNEXION",
+        "acces" => array(APP_ROLE_ADMINISTRATEUR, APP_ROLE_MEDECIN, APP_ROLE_PATIENT),
+        "libelleMenu" => mb_convert_encoding("Déconnectez-vous" ,'Windows-1252', 'UTF-8'),
+        "infoBulleMenu" => "Pour des raisons de sécurité, pensez à vous déconnecter du site en fin d'utilisation",
+        "urlVue" => "*/index.php",
+        "sousTitre" => false,
+        "corpsPage" => "Authentification/Deconnecter"
     )
 ));
 App_IdPageActuelle(); // Garantit que l'identifiant de page est initialisé lors de la première visite du site

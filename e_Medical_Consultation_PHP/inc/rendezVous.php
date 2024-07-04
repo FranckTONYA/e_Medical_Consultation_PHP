@@ -23,7 +23,7 @@ function RendezVous_AfficherListe()
 				{
                     Html_GenerateOC("th", HTML_CONTENT, "Description");
                     Html_GenerateOC("th", HTML_CONTENT, "Date ");
-                    Html_GenerateOC("th", HTML_CONTENT, "Durée");
+                    Html_GenerateOC("th", HTML_CONTENT, "Durée(min)");
                     Html_GenerateOC("th", HTML_CONTENT, "Consultation");
                     Html_GenerateOC("th", HTML_CONTENT, "Patient");
                     Html_GenerateOC("th", HTML_CONTENT, "Médecin");
@@ -57,7 +57,9 @@ function RendezVous_AfficherListe()
                             LEFT JOIN consultation ON rendez_vous.ref_consultation = consultation.id                            
                             LEFT JOIN statut_rendezvous ON rendez_vous.ref_statut = statut_rendezvous.id
                             LEFT JOIN utilisateur ON consultation.ref_medecin = utilisateur.id 
-                            LEFT JOIN dossier_patient ON consultation.ref_dossier = dossier_patient.id ") as $enregistrement)
+                            LEFT JOIN dossier_patient ON consultation.ref_dossier = dossier_patient.id 
+                            ORDER BY
+                        rendez_vous.date ASC ") as $enregistrement)
 				{
                     // Récupérer le patient associé au dossier patient
                     $enregistrement["patient"] = MySql_Row(
@@ -284,7 +286,7 @@ function TraitementFormulaire($donnees)
 
     if (Pdweb_IsInteger($resultat))
     {
-        Http_Redirect("CRUD_RENDEZVOUS");
+        Http_Redirect("*/.controleur.php?page=CRUD_RENDEZVOUS");
     }else{
         $erreur = true;
         $messageErreur = 'Erreur interne';

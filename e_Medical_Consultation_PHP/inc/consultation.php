@@ -194,7 +194,6 @@ function Consultation_AfficherFormulaire()
         } else {
             FormulaireConsultation($motif, $rapport, $prescription, $patient, $medecin, $listePatients, $listeMedecins);
         }
-//		Html_GenerateForm(FormulaireEdition($idConsultation, $motif, $rapport, $prescription, $patient, $medecin, $listeMedecins, $listePatients));
 		Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION"), "class", "bouton", "title", "Liste des consultations", HTML_CONTENT, "Retourner à la liste des consultations");
 	}, $idConsultation, $motif, $rapport, $prescription, $patient, $medecin, $listePatients, $listeMedecins);
 }
@@ -337,7 +336,7 @@ function TraitementFormulaire($donnees)
         }
         if (Pdweb_IsInteger($resultat))
         {
-            Http_Redirect("CRUD_CONSULTATION");
+            Http_Redirect("*/.controleur.php?page=CRUD_CONSULTATION");
         }else{
             $erreur = true;
             $messageErreur = 'Erreur interne';

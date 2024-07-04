@@ -11,10 +11,10 @@ define("PDWEB_CHARSET", CHARSET_ANSI);
 define("PDWEB_LIB_PATH", "_lib");
 
 // Configuration de ce site vis à vis de l'application ici présente
-define("APP_TITRE", "Consultation Médicale en ligne");
+define("APP_TITRE", mb_convert_encoding("Consultation Médicale en ligne", 'Windows-1252', 'UTF-8'));
 define("APP_JS", array("*/js/jquery-3.7.1.js", "*/js/app.js"));
 define("APP_CSS", "*/res/base.css");
-define("APP_PIEDPAGE", "Version 2024 - Consultation Médicale en ligne");
+define("APP_PIEDPAGE", mb_convert_encoding("Version 2024 - Consultation Médicale en ligne",'Windows-1252', 'UTF-8'));
 
 // Configuration de la connexion au serveur MySQL et à la base de données de l'application
 define("APP_MYSQL_USERNAME", "u_consultation");
