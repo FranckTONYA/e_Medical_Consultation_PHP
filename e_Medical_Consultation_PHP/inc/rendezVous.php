@@ -261,35 +261,49 @@ function TraitementFormulaire($donnees)
     $erreur = false;
     $messageErreur = null;
 
-    if (isset($_GET["id"]) ) // En Modification
-    {
-        $resultat = MySql_Execute("UPDATE rendez_vous
+    if(empty($date)){
+        $erreur = true;
+        $messageErreur = 'La date est requise';
+    }else if (empty($duree)){
+        $erreur = true;
+        $messageErreur = 'La durée est requise';
+    }else if (empty($statut)){
+        $erreur = true;
+        $messageErreur = 'Le statut est requis';
+    }else if (empty($consultation)){
+        $erreur = true;
+        $messageErreur = 'La consultation est requise';
+    }else{
+        if (isset($_GET["id"]) ) // En Modification
+        {
+            $resultat = MySql_Execute("UPDATE rendez_vous
                                             SET description = ?, date = ?, duree = ?, ref_statut = ? 
                                             WHERE id = ?;", array($description, $date, $duree, $statut, $_GET["id"]));
-    }
-    else // En Ajout
-    {
-        $idConsultation = MySql_Execute("INSERT INTO rendez_vous
-                                            SET description = ?, date = ?, duree = ?, ref_consultation = ?, ref_statut = ?;",
-            array($description, $date, $duree, $consultation, $statut));
-
-        if (!Pdweb_IsInteger($idConsultation))
-        {
-            $resultat = false;
         }
-        else{ // Ajouter le nouveau Rendez-vous dans la Consultation associée
-            $resultat = MySql_Execute("UPDATE consultation
+        else // En Ajout
+        {
+            $idConsultation = MySql_Execute("INSERT INTO rendez_vous
+                                            SET description = ?, date = ?, duree = ?, ref_consultation = ?, ref_statut = ?;",
+                array($description, $date, $duree, $consultation, $statut));
+
+            if (!Pdweb_IsInteger($idConsultation))
+            {
+                $resultat = false;
+            }
+            else{ // Ajouter le nouveau Rendez-vous dans la Consultation associée
+                $resultat = MySql_Execute("UPDATE consultation
                                             SET ref_rdv = ? 
                                             WHERE id = ?;", array($idConsultation, $consultation));
+            }
         }
-    }
 
-    if (Pdweb_IsInteger($resultat))
-    {
-        Http_Redirect("*/.controleur.php?page=CRUD_RENDEZVOUS");
-    }else{
-        $erreur = true;
-        $messageErreur = 'Erreur interne';
+        if (Pdweb_IsInteger($resultat))
+        {
+            Http_Redirect("*/.controleur.php?page=CRUD_RENDEZVOUS");
+        }else{
+            $erreur = true;
+            $messageErreur = 'Erreur interne';
+        }
     }
 
     if ($erreur) {

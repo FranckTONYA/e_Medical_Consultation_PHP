@@ -308,8 +308,18 @@ function TraitementFormulaire($donnees)
     $erreur = false;
     $messageErreur = null;
 
-    $dossier =  MySql_Row(
-        " SELECT
+    if(empty($motif)){
+        $erreur = true;
+        $messageErreur = 'Le motif est requis';
+    }else if (empty($medecin)){
+        $erreur = true;
+        $messageErreur = 'Le medecin est requis';
+    }else if (empty($patient)){
+        $erreur = true;
+        $messageErreur = 'Le patient est requis';
+    }else{
+        $dossier =  MySql_Row(
+            " SELECT
                         dossier_patient.id AS id,
                         dossier_patient.description AS description,
                         utilisateur.id AS patient_id
@@ -319,32 +329,33 @@ function TraitementFormulaire($donnees)
                     WHERE
                         utilisateur.id = ?;", array($patient));
 
-    if (empty($dossier)){
-        Http_Redirect("*/");
-    }else{
-        if (isset($_GET["id"]) ) // En Modification
-        {
-            $resultat = MySql_Execute("UPDATE consultation
+        if (empty($dossier)){
+            Http_Redirect("*/");
+        }else{
+            if (isset($_GET["id"]) ) // En Modification
+            {
+                $resultat = MySql_Execute("UPDATE consultation
                                             SET motif = ?, rapport = ?, prescription = ?, ref_medecin = ?, ref_dossier = ? 
                                             WHERE id = ?;", array($motif, $rapport, $prescription, $medecin, $dossier["id"], $_GET["id"]));
-        }
-        else // En Ajout
-        {
-            $resultat = MySql_Execute("INSERT INTO consultation
+            }
+            else // En Ajout
+            {
+                $resultat = MySql_Execute("INSERT INTO consultation
                                             SET motif = ?, rapport = ?, prescription = ?, ref_medecin = ?, ref_dossier = ?;",
-                                            array($motif, $rapport, $prescription, $medecin, $dossier["id"]));
+                    array($motif, $rapport, $prescription, $medecin, $dossier["id"]));
+            }
+            if (Pdweb_IsInteger($resultat))
+            {
+                Http_Redirect("*/.controleur.php?page=CRUD_CONSULTATION");
+            }else{
+                $erreur = true;
+                $messageErreur = 'Erreur interne';
+            }
         }
-        if (Pdweb_IsInteger($resultat))
-        {
-            Http_Redirect("*/.controleur.php?page=CRUD_CONSULTATION");
-        }else{
-            $erreur = true;
-            $messageErreur = 'Erreur interne';
-        }
+    }
 
-        if ($erreur) {
-            return $messageErreur;
-        }
+    if ($erreur) {
+        return $messageErreur;
     }
 }
 
