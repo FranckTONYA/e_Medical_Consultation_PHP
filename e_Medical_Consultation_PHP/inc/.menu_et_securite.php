@@ -57,7 +57,7 @@ define("APP_MENU", array
         "infoBulleMenu" => "Gérer les utilisateurs de l'applications",
         "urlVue" => "*/index.php",
         "sousTitre" => "Utilisateurs",
-        "corpsPage" => "Utilisateurs/Afficher"
+        "corpsPage" => "Utilisateur/Afficher"
     ),
     "CRUD_UTILISATEUR_AJOUT" => array
     (
@@ -87,7 +87,7 @@ define("APP_MENU", array
 		"infoBulleMenu" => "Gestion des dossiers patients",
 		"urlVue" => "*/index.php",
 		"sousTitre" => "Dossier Patients de " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
-		"corpsPage" => App_EstAdministrateur() ? "Admin/AfficherDossiers" : "Medecin/AfficherDossiers"
+		"corpsPage" => "Dossier/Afficher"
 	),
     "CRUD_DOSSIER_PATIENT_AJOUT" => array
     (
@@ -97,7 +97,7 @@ define("APP_MENU", array
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
         "sousTitre" => "Ajout d'un dossier patient pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
-        "corpsPage" => "DossierPatient/AfficherAjout"
+        "corpsPage" => "Dossier/AfficherAjout"
     ),
     "CRUD_DOSSIER_PATIENT_EDITION" => array
     (
@@ -107,7 +107,7 @@ define("APP_MENU", array
         "infoBulleMenu" => null,
         "urlVue" => "*/index.php",
         "sousTitre" => "Modification d'un dossier patient pour " . App_DenominationUtilisateur() . " (" . App_RoleActuel() . ")",
-        "corpsPage" => "DossierPatient/AfficherEdition"
+        "corpsPage" => "Dossier/AfficherEdition"
     ),
 	"CRUD_CONSULTATION" => array
 	(

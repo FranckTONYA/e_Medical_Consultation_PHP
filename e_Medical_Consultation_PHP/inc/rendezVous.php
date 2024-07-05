@@ -3,7 +3,7 @@ Pdweb_IncludeLib("pdweb.html.php");
 
 define("APP_FORM_RENDEZ_VOUS", array
 (
-	"id" => "consultation",
+	"id" => "rendezVous",
 	"url" => "*/.controleur.php",
 	"elements" => array()
 ));

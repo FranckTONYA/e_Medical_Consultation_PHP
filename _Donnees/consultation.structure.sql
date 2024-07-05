@@ -31,6 +31,7 @@ ALTER USER 'u_consultation'@'localhost';
 
 CREATE TABLE `consultation` (
   `id` int NOT NULL,
+  `motif` varchar(255) NOT NULL,
   `rapport` varchar(255) DEFAULT NULL,
   `prescription` varchar(255) DEFAULT NULL,
   `ref_medecin` int NOT NULL,
@@ -47,7 +48,7 @@ CREATE TABLE `consultation` (
 CREATE TABLE `dossier_patient` (
   `id` int NOT NULL,
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `ref_utilisateur` int NOT NULL
+  `ref_patient` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -132,15 +133,14 @@ CREATE TABLE `utilisateur` (
 ALTER TABLE `consultation`
   ADD PRIMARY KEY (`id`),
   ADD KEY `consultation_ibfk_1` (`ref_medecin`),
-  ADD KEY `consultation_ibfk_2` (`ref_dossier`),
-  ADD KEY `consultation_ibfk_3` (`ref_rdv`);
+  ADD KEY `consultation_ibfk_2` (`ref_dossier`);
 
 --
 -- Index pour la table `dossier_patient`
 --
 ALTER TABLE `dossier_patient`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `dossier_ibfk_1` (`ref_utilisateur`);
+  ADD KEY `dossier_ibfk_1` (`ref_patient`);
 
 --
 -- Index pour la table `hopital`
@@ -232,14 +232,13 @@ ALTER TABLE `utilisateur`
 --
 ALTER TABLE `consultation`
   ADD CONSTRAINT `consultation_ibfk_1` FOREIGN KEY (`ref_medecin`) REFERENCES `utilisateur` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `consultation_ibfk_2` FOREIGN KEY (`ref_dossier`) REFERENCES `dossier_patient` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `consultation_ibfk_3` FOREIGN KEY (`ref_rdv`) REFERENCES `rendez_vous` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `consultation_ibfk_2` FOREIGN KEY (`ref_dossier`) REFERENCES `dossier_patient` (`id`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `dossier_patient`
 --
 ALTER TABLE `dossier_patient`
-  ADD CONSTRAINT `dossier_ibfk_1` FOREIGN KEY (`ref_utilisateur`) REFERENCES `utilisateur` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `dossier_ibfk_1` FOREIGN KEY (`ref_patient`) REFERENCES `utilisateur` (`id`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `rendez_vous`
@@ -254,8 +253,4 @@ ALTER TABLE `rendez_vous`
 ALTER TABLE `utilisateur`
   ADD CONSTRAINT `hopital_ibfk_2` FOREIGN KEY (`ref_hopital`) REFERENCES `hopital` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `role_ibfk_1` FOREIGN KEY (`ref_role`) REFERENCES `role_utilisateur` (`id`) ON DELETE CASCADE;
-  
-  -- ---------------------
--- Fin de la transaction
--- ---------------------
 COMMIT;

@@ -245,7 +245,7 @@ function ListeMedecins()
                         utilisateur.nom ASC", array(2) ) as $enregistrement){
 
         // Filter par rapport au profil de l'utilisateur connecté
-        if(App_EstMedecin() && ($enregistrement["email"] == $_SESSION["utilisateur"]["email"])) $listeMedecins[] = $enregistrement;
+        if(App_EstAdministrateur() || ($enregistrement["email"] == $_SESSION["utilisateur"]["email"])) $listeMedecins[] = $enregistrement;
 
     }
 
