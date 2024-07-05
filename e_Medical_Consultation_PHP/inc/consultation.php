@@ -70,6 +70,10 @@ function Consultation_AfficherListe()
                         utilisateur
                     WHERE utilisateur.id = ?", array($enregistrement["dossier_ref_patient"]));
 
+                    // Filter par rapport au profil de l'utilisateur connecté
+                    if(App_EstMedecin() && ($enregistrement["medecin_email"] != $_SESSION["utilisateur"]["email"])) continue;
+                    if(App_EstPatient() && ($enregistrement["patient"]["email"] != $_SESSION["utilisateur"]["email"])) continue;
+
 					Html_GenerateG("tr", HTML_CONTENT, function($enregistrement)
 					{
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["motif"]);
@@ -81,36 +85,39 @@ function Consultation_AfficherListe()
 
 						Html_GenerateG("td", HTML_CONTENT, function($enregistrement)
 						{
-                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Éditer cette consultation", HTML_CONTENT, "E");
-                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("Consultation/RendezVous") . "&id=$enregistrement[consultation_id]"),  "class", "bouton", "title", "Rendez-vous de cette consultation", HTML_CONTENT, "RDV");
-						}, $enregistrement);
+                            // Filter par rapport au profil de l'utilisateur connecté
+                            if(App_EstAdministrateur() ||  App_EstMedecin() ){
+                                Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Éditer cette consultation", HTML_CONTENT, "E");
+                                Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("Consultation/RendezVous") . "&id=$enregistrement[consultation_id]"),  "class", "bouton", "title", "Rendez-vous de cette consultation", HTML_CONTENT, "RDV");
+                            }
 
-						$parametres = array("td");
-						$parametres = array_merge($parametres, array(HTML_CONTENT, function($enregistrement)
-						{
-                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("Consultation/Supprimer") . "&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Supprimer cette consultation", HTML_CONTENT, "S");
-						}, $enregistrement));
-						Html_GenerateG(...$parametres);
-//
-//                        $parametres = array("td");
-//                        $parametres2 = array_merge($parametres, array(HTML_CONTENT, function($enregistrement)
-//                        {
-//                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Rendez-vous de cette consultation", HTML_CONTENT, "RDV");
-//                        }, $enregistrement));
-//                        Html_GenerateG(...$parametres2);
+						}, $enregistrement);
+                        // Filter par rapport au profil de l'utilisateur connecté
+                        if(App_EstAdministrateur() ||  App_EstMedecin() ){
+                            $parametres = array("td");
+                            $parametres = array_merge($parametres, array(HTML_CONTENT, function($enregistrement)
+                            {
+                                Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("Consultation/Supprimer") . "&id=$enregistrement[consultation_id]"), "class", "bouton", "title", "Supprimer cette consultation", HTML_CONTENT, "S");
+                            }, $enregistrement));
+                            Html_GenerateG(...$parametres);
+                        }
+
 					}, $enregistrement);
 				}
 			});
-			Html_GenerateG("tfoot", HTML_CONTENT, function()
-			{
-				Html_GenerateG("tr", HTML_CONTENT, function()
-				{
-					Html_GenerateG("td", "colspan", 4, HTML_CONTENT, function()
-					{
-						Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Ajouter une consultation");
-					});
-				});
-			});
+            // Filter par rapport au profil de l'utilisateur connecté
+            if(App_EstAdministrateur() ||  App_EstMedecin() ){
+                Html_GenerateG("tfoot", HTML_CONTENT, function()
+                {
+                    Html_GenerateG("tr", HTML_CONTENT, function()
+                    {
+                        Html_GenerateG("td", "colspan", 4, HTML_CONTENT, function()
+                        {
+                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_CONSULTATION_EDITION"), "class", "bouton", "title", "Ajouter une nouvelle consultation", HTML_CONTENT, "Ajouter une consultation");
+                        });
+                    });
+                });
+            }
 		});
 	});
 }
@@ -236,7 +243,10 @@ function ListeMedecins()
                     WHERE role_utilisateur.id = ?
                     ORDER BY
                         utilisateur.nom ASC", array(2) ) as $enregistrement){
-        $listeMedecins[] = $enregistrement;
+
+        // Filter par rapport au profil de l'utilisateur connecté
+        if(App_EstMedecin() && ($enregistrement["email"] == $_SESSION["utilisateur"]["email"])) $listeMedecins[] = $enregistrement;
+
     }
 
     return $listeMedecins;

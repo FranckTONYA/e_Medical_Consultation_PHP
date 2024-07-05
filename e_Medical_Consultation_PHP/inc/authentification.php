@@ -70,15 +70,15 @@ function Authentification_Authentifier($donnees)
 	$resultat = MySql_Row
 	(
         "SELECT     
-                utilisateur.id AS utilisateur_id,
-                utilisateur.email AS utilisateur_email,
-                utilisateur.password AS utilisateur_motDePasse,
-                utilisateur.token AS utilisateur_token,
-                utilisateur.nom AS utilisateur_nom,
-                utilisateur.prenom AS utilisateur_prenom,
-                utilisateur.telephone AS utilisateur_telephone,
-                utilisateur.date_naissance AS utilisateur_dateNaissance,
-                utilisateur.adresse AS utilisateur_adresse,
+                utilisateur.id AS id,
+                utilisateur.email AS email,
+                utilisateur.password AS motDePasse,
+                utilisateur.token AS token,
+                utilisateur.nom AS nom,
+                utilisateur.prenom AS prenom,
+                utilisateur.telephone AS telephone,
+                utilisateur.date_naissance AS dateNaissance,
+                utilisateur.adresse AS adresse,
                 role_utilisateur.id AS role_id,
                 role_utilisateur.nom AS role,                        
                 role_utilisateur.description AS role_description
@@ -98,7 +98,7 @@ function Authentification_Authentifier($donnees)
         Connexion_Erreur($email);
         Http_Redirect("*/");
 	}
-    else if (!VerifierMDP($donnees["mdp"], $resultat["utilisateur_motDePasse"]))
+    else if (!VerifierMDP($donnees["mdp"], $resultat["motDePasse"]))
     {
         Connexion_Erreur($email);
         Http_Redirect("*/");
@@ -111,7 +111,7 @@ function Authentification_Authentifier($donnees)
 			Http_Redirect("*/");
 		}
 		Form_ClearValues(APP_FORM_AUTHENTIFICATION["id"]);
-        $_SESSION["utilisateur"]["denomination"] = $resultat["utilisateur_nom"] . " " . $resultat["utilisateur_prenom"];
+        $_SESSION["utilisateur"]["denomination"] = $resultat["nom"] . " " . $resultat["prenom"];
 		App_RedirigerVersPage("ACCUEIL");
 	}
 }

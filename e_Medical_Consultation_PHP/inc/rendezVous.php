@@ -72,6 +72,10 @@ function RendezVous_AfficherListe()
                                 utilisateur
                             WHERE utilisateur.id = ?", array($enregistrement["dossier_ref_patient"]));
 
+                    // Filter par rapport au profil de l'utilisateur connecté
+                    if(App_EstMedecin() && ($enregistrement["medecin_email"] != $_SESSION["utilisateur"]["email"])) continue;
+                    if(App_EstPatient() && ($enregistrement["patient"]["email"] != $_SESSION["utilisateur"]["email"])) continue;
+
 					Html_GenerateG("tr", HTML_CONTENT, function($enregistrement)
 					{
                         Html_GenerateOC("td", HTML_CONTENT, $enregistrement["rdv_description"]);
@@ -84,17 +88,22 @@ function RendezVous_AfficherListe()
 
 						Html_GenerateG("td", HTML_CONTENT, function($enregistrement)
 						{
-                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_RENDEZVOUS_EDITION&id=$enregistrement[rdv_id]"), "class", "bouton", "title", "Éditer ce Rendez-vous", HTML_CONTENT, "E");
-                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("RendezVous/Consultation") . "&id=$enregistrement[rdv_id]"),  "class", "bouton", "title", "Consultation de ce Rendez-vous", HTML_CONTENT, "C");
+                            // Filter par rapport au profil de l'utilisateur connecté
+                            if(App_EstAdministrateur() ||  App_EstMedecin() ){
+                                Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?page=CRUD_RENDEZVOUS_EDITION&id=$enregistrement[rdv_id]"), "class", "bouton", "title", "Éditer ce Rendez-vous", HTML_CONTENT, "E");
+                                Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("RendezVous/Consultation") . "&id=$enregistrement[rdv_id]"),  "class", "bouton", "title", "Consultation de ce Rendez-vous", HTML_CONTENT, "C");
+                            }
+
 						}, $enregistrement);
-
-						$parametres = array("td");
-						$parametres = array_merge($parametres, array(HTML_CONTENT, function($enregistrement)
-						{
-                            Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("RendezVous/Supprimer") . "&id=$enregistrement[rdv_id]"), "class", "bouton", "title", "Supprimer ce Rendez-vous", HTML_CONTENT, "S");
-						}, $enregistrement));
-						Html_GenerateG(...$parametres);
-
+                        // Filter par rapport au profil de l'utilisateur connecté
+                        if(App_EstAdministrateur() ||  App_EstMedecin() ){
+                            $parametres = array("td");
+                            $parametres = array_merge($parametres, array(HTML_CONTENT, function($enregistrement)
+                            {
+                                Html_GenerateOC("a", "href", Url_PathTo("*/.controleur.php?action=" . urlencode("RendezVous/Supprimer") . "&id=$enregistrement[rdv_id]"), "class", "bouton", "title", "Supprimer ce Rendez-vous", HTML_CONTENT, "S");
+                            }, $enregistrement));
+                            Html_GenerateG(...$parametres);
+                        }
 					}, $enregistrement);
 				}
 			});
